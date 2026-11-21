@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StudyHall — Retro Bowl</title>
+<style>
+  html,body{margin:0;padding:0;height:100%;background:#000;overflow:hidden}
+  #wrap{position:fixed;inset:0;display:flex;flex-direction:column;background:#111}
+  #top{flex:0 0 auto;padding:8px 12px;background:#0b0b12;color:#eaeaf2;font-family:system-ui,sans-serif;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+  #top a{color:#00e5ff;text-decoration:none;font-weight:600}
+  #frame-wrap{flex:1;position:relative;min-height:0}
+  #frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  #panic{position:fixed;inset:0;background:#000;z-index:2147483647;display:none}
+  #panic.on{display:block}
+</style>
+</head>
+<body>
+<div id="panic"></div>
+<div id="wrap">
+  <div id="top">
+    <span>📚 StudyHall · Retro Bowl</span>
+    <a href="StudyHall.html">← Back to media</a>
+  </div>
+  <div id="frame-wrap">
+    <iframe
+      allowfullscreen="true"
+      webkitallowfullscreen="true"
+      mozallowfullscreen="true"
+      src="https://game316009.konggames.com/gamez/0031/6009/live/index.html"
+      scrolling="no"
+      frameborder="0"
+      title="Retro Bowl">
+    </iframe>
+  </div>
+</div>
+<script>
+(function(){
+  var panic = document.getElementById('panic');
+  var realTitle = document.title;
+  var active = false;
+  function goPanic(){
+    if(active) return;
+    active = true;
+    panic.classList.add('on');
+    document.title = 'Error 404';
+    try{ history.replaceState(null,'',' '); }catch(e){}
+  }
+  function restore(){
+    if(!active) return;
+    active = false;
+    panic.classList.remove('on');
+    document.title = realTitle;
+  }
+  window.addEventListener('blur', goPanic);
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden) goPanic(); else restore();
+  });
+  window.addEventListener('focus', restore);
+  panic.addEventListener('click', restore);
+  panic.addEventListener('touchstart', restore, {passive:true});
+})();
+</script>
+</body>
+</html>
