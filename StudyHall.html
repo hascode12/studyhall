@@ -27,6 +27,37 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Neon Star Falling Background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #00e5ff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #ff2d95, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 120px, #00e5ff, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 250px 250px;
+      animation: fallStars 10s linear infinite;
+      z-index: -1;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    @keyframes fallStars {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(250px);
+      }
     }
 
     #panic {
@@ -521,7 +552,7 @@
 
     <div class="grid" id="grid">
 
-      <!-- SLOPE (external file) -->
+      <!-- SLOPE -->
       <a class="card card-link" href="Slope-StudyHall.html" data-name="Slope">
         <div class="card-head">
           <h3>⛷️ Slope</h3>
@@ -541,7 +572,7 @@
         </div>
       </a>
 
-      <!-- RETRO BOWL (In-G) -->
+      <!-- RETRO BOWL -->
       <a class="card card-link" href="RetroBowl-StudyHall.html" data-name="Retro Bowl">
         <div class="card-head">
           <h3>🏈 Retro Bowl</h3>
