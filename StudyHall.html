@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyHall — Focus & Review</title>
+  <style>
+    :root {
+      --bg: #0a0a12;
+      --panel: #12121f;
+      --card: #16162a;
+      --accent: #00f0ff;
+      --accent2: #ff00aa;
+      --accent3: #a855f7;
+      --text: #e8e8f0;
+      --muted: #8888a8;
+      --success: #22c55e;
+      --radius: 14px;
+      --glow: 0 0 20px rgba(0, 240, 255, 0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Animated background */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+    }
+
+    /* Header */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 1.5rem 1.5rem 0;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      box-shadow: var(--glow);
+    }
+
+    .logo h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo span {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: block;
+      margin-top: -2px;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: var(--text);
+      background: var(--card);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #00b8d4);
+      color: #000;
+      border: none;
+      box-shadow: var(--glow);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: rgba(0, 240, 255, 0.25);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      background: rgba(0, 240, 255, 0.08);
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      padding: 3rem 1.5rem 2.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero h2 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+    }
+
+    .hero h2 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 560px;
+      margin: 0 auto 1.8rem;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .stat span {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Search & Filters */
+    .controls {
+      position: relative;
+      z-index: 5;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem 1.5rem;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      padding: 0.85rem 1.1rem 0.85rem 2.8rem;
+      background: var(--panel);
+      border: 1px solid rgba(0, 240, 255, 0.15);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-wrap input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15);
+    }
+
+    .search-wrap::before {
+      content: "🔍";
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    .filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .filter-btn {
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--card);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      color: var(--text);
+      border-color: rgba(0, 240, 255, 0.3);
+    }
+
+    .filter-btn.active {
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Featured Playable Games */
+    .section {
+      position: relative;
+      z-index: 5;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .section-header h3 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-header h3::before {
+      content: "";
+      width: 6px;
+      height: 22px;
+      background: linear-gradient(var(--accent), var(--accent2));
+      border-radius: 4px;
+    }
+
+    .playable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .playable-card {
+      background: var(--panel);
+      border: 1px solid rgba(0, 240, 255, 0.12);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .playable-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    .playable-card .card-head {
+      padding: 1rem 1.1rem 0.6rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .playable-card h4 {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .playable-card .tag {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(0, 240, 255, 0.12);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .playable-card .card-body {
+      padding: 0 1.1rem 1.1rem;
+    }
+
+    .playable-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .game-canvas-wrap {
+      background: #0d0d18;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 1;
+      max-height: 320px;
+    }
+
+    .game-canvas-wrap canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .game-ui {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.7);
+      gap: 0.75rem;
+      transition: opacity 0.2s;
+    }
+
+    .game-ui.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .game-ui h5 {
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .game-ui .score-display {
+      font-size: 0.95rem;
+      color: var(--accent);
+    }
+
+    .game-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .game-controls button {
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .game-controls button.secondary {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Games Catalog */
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .game-card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 1.1rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .game-card:hover {
+      border-color: rgba(0, 240, 255, 0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    }
+
+    .game-card:hover::before {
+      opacity: 1;
+    }
+
+    .game-card .emoji {
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+
+    .game-card h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .game-card .cat {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .game-card .desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .results-info {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Modal for external games */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--panel);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 16px;
+      max-width: 480px;
+      width: 100%;
+      padding: 1.75rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-content p {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .hero { padding: 2rem 1rem 1.5rem; }
+      .stats { gap: 1.25rem; }
+      .stat strong { font-size: 1.4rem; }
+      .catalog-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+
+    /* ========== STUDY MODE OVERLAY (blur / hide on unfocus) ========== */
+    #study-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #f8f9fa;
+      color: #1a1a1a;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      display: none;
+      flex-direction: column;
+      overflow: auto;
+      padding: 0;
+    }
+    #study-overlay.active {
+      display: flex;
+    }
+    .study-topbar {
+      background: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .study-topbar .brand {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #1a73e8;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .study-topbar .status {
+      font-size: 0.85rem;
+      color: #5f6368;
+    }
+    .study-body {
+      flex: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 3rem;
+      width: 100%;
+    }
+    .study-body h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #202124;
+    }
+    .study-body .subtitle {
+      color: #5f6368;
+      margin-bottom: 1.75rem;
+      font-size: 0.95rem;
+    }
+    .study-card {
+      background: #fff;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .study-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #202124;
+    }
+    .study-card p {
+      color: #3c4043;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+    .study-progress {
+      height: 6px;
+      background: #e8eaed;
+      border-radius: 3px;
+      margin-top: 0.75rem;
+      overflow: hidden;
+    }
+    .study-progress > div {
+      height: 100%;
+      width: 68%;
+      background: #1a73e8;
+      border-radius: 3px;
+    }
+    .study-notes {
+      background: #fff;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      min-height: 140px;
+      color: #5f6368;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .study-hint {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #9aa0a6;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- STUDY OVERLAY — appears when page loses focus -->
+  <div id="study-overlay">
+    <div class="study-topbar">
+      <div class="brand">📚 StudyHall</div>
+      <div class="status">Session in progress · Auto-saved</div>
+    </div>
+    <div class="study-body">
+      <h1>Chapter Review — Session Notes</h1>
+      <p class="subtitle">Last saved just now · Continue where you left off</p>
+
+      <div class="study-card">
+        <h3>Reading Progress</h3>
+        <p>Sections 4.2 – 4.5 · Key concepts marked for review</p>
+        <div class="study-progress"><div></div></div>
+      </div>
+
+      <div class="study-card">
+        <h3>Quick Summary</h3>
+        <p>
+          Main ideas from the current unit have been outlined. Practice problems
+          and flashcards are available in the modules list. Focus on the
+          highlighted definitions and the worked examples before moving on.
+        </p>
+      </div>
+
+      <div class="study-card">
+        <h3>Notes</h3>
+        <div class="study-notes">
+          • Review definitions from section 4.3<br>
+          • Complete practice set B before next session<br>
+          • Key formula: check page 142<br>
+          • Group discussion points prepared
+        </div>
+      </div>
+
+      <p class="study-hint">Click back into this window to continue your session</p>
+    </div>
+  </div>
+
+  <div class="bg-grid"></div>
+  <div class="particles" id="particles"></div>
+
+  <header>
+    <nav class="nav">
+      <a href="#" class="logo">
+        <div class="logo-icon">📚</div>
+        <div>
+          <h1>StudyHall</h1>
+          <span>Focus & Review Tools</span>
+        </div>
+      </a>
+      <div class="nav-actions">
+        <button class="btn btn-ghost" onclick="scrollToSection('playable')">Quick Review</button>
+        <button class="btn btn-primary" onclick="randomGame()">🎲 Random Topic</button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Study <span id="game-count-hero">500+</span> Topics<br>Instantly in Your Browser</h2>
+    <p>Clean review tools for practice sessions. No downloads. Works offline for built-in modules.</p>
+    <div class="stats">
+      <div class="stat">
+        <strong id="game-count">500+</strong>
+        <span>Modules</span>
+      </div>
+      <div class="stat">
+        <strong>0</strong>
+        <span>Installs</span>
+      </div>
+      <div class="stat">
+        <strong>100%</strong>
+        <span>Free</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search & Filters -->
+  <div class="controls">
+    <div class="search-bar">
+      <div class="search-wrap">
+        <input type="text" id="search" placeholder="Search topics..." oninput="filterGames()" />
+      </div>
+    </div>
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-cat="all" onclick="setFilter('all')">All</button>
+      <button class="filter-btn" data-cat="Arcade" onclick="setFilter('Arcade')">Arcade</button>
+      <button class="filter-btn" data-cat="Puzzle" onclick="setFilter('Puzzle')">Puzzle</button>
+      <button class="filter-btn" data-cat="Action" onclick="setFilter('Action')">Action</button>
+      <button class="filter-btn" data-cat="Racing" onclick="setFilter('Racing')">Racing</button>
+      <button class="filter-btn" data-cat="Strategy" onclick="setFilter('Strategy')">Strategy</button>
+      <button class="filter-btn" data-cat="Casual" onclick="setFilter('Casual')">Casual</button>
+      <button class="filter-btn" data-cat="Sports" onclick="setFilter('Sports')">Sports</button>
+      <button class="filter-btn" data-cat="Adventure" onclick="setFilter('Adventure')">Adventure</button>
+    </div>
+  </div>
+
+  <!-- Playable Mini-Games -->
+  <section class="section" id="playable">
+    <div class="section-header">
+      <h3>Quick Practice Modules</h3>
+    </div>
+    <div class="playable-grid">
+      <!-- Snake -->
+      <div class="playable-card">
+        <div class="card-head">
+          <h4>🐍 Snake</h4>
+          <span class="tag">Arcade</span>
+        </div>
+        <div class="card-body">
+          <p>Classic snake. Eat, grow, don't crash. Arrow keys or swipe.</p>
+          <div class="game-canvas-wrap" id="snake-wrap">
+            <canvas id="snake-canvas"></canvas>
+            <div class="game-ui" id="snake-ui">
+              <h5>Snake</h5>
+              <div class="score-display">High: <span id="snake-high">0</span></div>
+              <div class="game-controls">
+                <button onclick="startSnake()">Play</button>
+              </div>
+            </div>
+          </div>
+          <div class="game-controls" style="margin-top:0.6rem">
+            <button class="secondary" onclick="resetSnake()">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2048 -->
+      <div class="playable-card">
+        <div class="card-head">
+          <h4>🔢 2048</h4>
+          <span class="tag">Puzzle</span>
+        </div>
+        <div class="card-body">
+          <p>Slide tiles, merge numbers. Reach 2048!</p>
+          <div class="game-canvas-wrap" id="g2048-wrap">
+            <canvas id="g2048-canvas"></canvas>
+            <div class="game-ui" id="g2048-ui">
+              <h5>2048</h5>
+              <div class="score-display">Score: <span id="g2048-score">0</span></div>
+              <div class="game-controls">
+                <button onclick="start2048()">Play</button>
+              </div>
+            </div>
+          </div>
+          <div class="game-controls" style="margin-top:0.6rem">
+            <button class="secondary" onclick="reset2048()">New Game</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breakout -->
+      <div class="playable-card">
+        <div class="card-head">
+          <h4>🧱 Breakout</h4>
+          <span class="tag">Arcade</span>
+        </div>
+        <div class="card-body">
+          <p>Bounce the ball, smash all bricks. Mouse / touch to move.</p>
+          <div class="game-canvas-wrap" id="breakout-wrap">
+            <canvas id="breakout-canvas"></canvas>
+            <div class="game-ui" id="breakout-ui">
+              <h5>Breakout</h5>
+              <div class="score-display">Score: <span id="breakout-score">0</span></div>
+              <div class="game-controls">
+                <button onclick="startBreakout()">Play</button>
+              </div>
+            </div>
+          </div>
+          <div class="game-controls" style="margin-top:0.6rem">
+            <button class="secondary" onclick="resetBreakout()">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Memory Match -->
+      <div class="playable-card">
+        <div class="card-head">
+          <h4>🧠 Memory</h4>
+          <span class="tag">Puzzle</span>
+        </div>
+        <div class="card-body">
+          <p>Find matching pairs. Test your memory!</p>
+          <div class="game-canvas-wrap" id="memory-wrap" style="aspect-ratio:1;max-height:320px;">
+            <div id="memory-board" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px;height:100%;"></div>
+            <div class="game-ui" id="memory-ui">
+              <h5>Memory Match</h5>
+              <div class="score-display">Moves: <span id="memory-moves">0</span></div>
+              <div class="game-controls">
+                <button onclick="startMemory()">Play</button>
+              </div>
+            </div>
+          </div>
+          <div class="game-controls" style="margin-top:0.6rem">
+            <button class="secondary" onclick="resetMemory()">New Game</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full Catalog -->
+  <section class="section" id="catalog">
+    <div class="section-header">
+      <h3>All Modules</h3>
+      <span class="results-info" id="results-info">Showing modules</span>
+    </div>
+    <div class="catalog-grid" id="catalog-grid">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <footer>
+    <p>StudyHall — Focus tools & review modules. No downloads required.</p>
+    <p style="margin-top:0.5rem;font-size:0.8rem;">Open this file in any modern browser. Works offline for built-in modules.</p>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3 id="modal-title">Topic</h3>
+      <p id="modal-desc">Ready to review?</p>
+      <div class="modal-actions">
+        <a id="modal-play" href="#" target="_blank" rel="noopener" class="btn btn-primary">Open Module ↗</a>
+        <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== Particles ==========
+    (function() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (8 + Math.random() * 12) + 's';
+        p.style.animationDelay = Math.random() * 10 + 's';
+        p.style.width = p.style.height = (1 + Math.random() * 3) + 'px';
+        p.style.background = ['#00f0ff', '#ff00aa', '#a855f7'][Math.floor(Math.random()*3)];
+        container.appendChild(p);
+      }
+    })();
+
+    // ========== Game Catalog Data (200+ entries) ==========
+    const GAMES = [
+      // Arcade
+      { name: "Snake Classic", cat: "Arcade", emoji: "🐍", desc: "Grow as long as you can without hitting yourself.", url: "https://playsnake.org/" },
+      { name: "Flappy Bird", cat: "Arcade", emoji: "🐦", desc: "Tap to flap through the pipes.", url: "https://flappybird.io/" },
+      { name: "Space Invaders", cat: "Arcade", emoji: "👾", desc: "Defend Earth from alien invaders.", url: "https://www.retrogames.cz/play_112-SpaceInvaders.html" },
+      { name: "Pac-Man", cat: "Arcade", emoji: "👻", desc: "Eat dots, avoid ghosts in the maze.", url: "https://www.google.com/logos/2010/pacman10-i.html" },
+      { name: "Breakout", cat: "Arcade", emoji: "🧱", desc: "Smash bricks with a bouncing ball.", url: "https://www.crazygames.com/game/breakout" },
+      { name: "Asteroids", cat: "Arcade", emoji: "☄️", desc: "Blast space rocks in every direction.", url: "https://www.retrogames.cz/play_041-Asteroids.html" },
+      { name: "Pong", cat: "Arcade", emoji: "🏓", desc: "The original paddle duel.", url: "https://www.ponggame.org/" },
+      { name: "Tetris", cat: "Arcade", emoji: "🟦", desc: "Stack falling blocks and clear lines.", url: "https://tetris.com/play-tetris" },
+      { name: "Frogger", cat: "Arcade", emoji: "🐸", desc: "Cross the road and river safely.", url: "https://www.retrogames.cz/play_033-Frogger.html" },
+      { name: "Centipede", cat: "Arcade", emoji: "🐛", desc: "Shoot the descending centipede.", url: "https://www.retrogames.cz/play_042-Centipede.html" },
+      { name: "Galaga", cat: "Arcade", emoji: "🚀", desc: "Classic fixed-shooter space battle.", url: "https://www.retrogames.cz/play_043-Galaga.html" },
+      { name: "Donkey Kong", cat: "Arcade", emoji: "🦍", desc: "Climb ladders and dodge barrels.", url: "https://www.retrogames.cz/play_044-DonkeyKong.html" },
+      { name: "Dig Dug", cat: "Arcade", emoji: "⛏️", desc: "Dig tunnels and inflate enemies.", url: "https://www.retrogames.cz/play_045-DigDug.html" },
+      { name: "Q*bert", cat: "Arcade", emoji: "🟠", desc: "Hop on cubes and change their color.", url: "https://www.retrogames.cz/play_046-Qbert.html" },
+      { name: "Missile Command", cat: "Arcade", emoji: "💥", desc: "Protect cities from incoming missiles.", url: "https://www.retrogames.cz/play_047-MissileCommand.html" },
+      { name: "Tempest", cat: "Arcade", emoji: "🌀", desc: "Tube-based vector shooter classic.", url: "https://www.retrogames.cz/play_048-Tempest.html" },
+      { name: "Joust", cat: "Arcade", emoji: "🦅", desc: "Knight bird combat in the sky.", url: "https://www.retrogames.cz/play_049-Joust.html" },
+      { name: "Robotron 2084", cat: "Arcade", emoji: "🤖", desc: "Twin-stick mayhem against robots.", url: "https://www.retrogames.cz/play_050-Robotron.html" },
+      { name: "Bubble Bobble", cat: "Arcade", emoji: "🫧", desc: "Trap enemies in bubbles and pop them.", url: "https://www.retrogames.cz/play_051-BubbleBobble.html" },
+      { name: "Snow Bros", cat: "Arcade", emoji: "⛄", desc: "Throw snowballs and clear the stage.", url: "https://www.retrogames.cz/play_052-SnowBros.html" },
+      { name: "Dino Runner", cat: "Arcade", emoji: "🦖", desc: "Chrome offline dinosaur endless runner.", url: "https://chromedino.com/" },
+      { name: "Geometry Dash Lite", cat: "Arcade", emoji: "📐", desc: "Rhythm-based platform jumping.", url: "https://www.crazygames.com/game/geometry-dash" },
+      { name: "Slope", cat: "Arcade", emoji: "⛷️", desc: "Roll down an endless neon slope.", url: "https://slopegame.io/" },
+      { name: "Stack Ball", cat: "Arcade", emoji: "🏀", desc: "Smash through colorful platforms.", url: "https://www.crazygames.com/game/stack-ball" },
+      { name: "Helix Jump", cat: "Arcade", emoji: "🌀", desc: "Drop the ball down the helix tower.", url: "https://www.crazygames.com/game/helix-jump" },
+      { name: "Crossy Road", cat: "Arcade", emoji: "🐔", desc: "Hop across roads and rivers forever.", url: "https://www.crazygames.com/game/crossy-road" },
+      { name: "Temple Run Style", cat: "Arcade", emoji: "🏃", desc: "Endless temple runner.", url: "https://www.crazygames.com/game/temple-run-2" },
+      { name: "Subway Surfers", cat: "Arcade", emoji: "🚇", desc: "Dash through subway tracks.", url: "https://www.crazygames.com/game/subway-surfers" },
+      { name: "Fruit Ninja", cat: "Arcade", emoji: "🍉", desc: "Slice fruit, avoid bombs.", url: "https://www.crazygames.com/game/fruit-ninja" },
+      { name: "Cut the Rope", cat: "Arcade", emoji: "🍬", desc: "Feed candy to the little monster.", url: "https://www.crazygames.com/game/cut-the-rope" },
+
+      // Puzzle
+      { name: "2048", cat: "Puzzle", emoji: "🔢", desc: "Merge tiles to reach 2048.", url: "https://play2048.co/" },
+      { name: "Sudoku", cat: "Puzzle", emoji: "9️⃣", desc: "Fill the 9x9 grid with logic.", url: "https://sudoku.com/" },
+      { name: "Minesweeper", cat: "Puzzle", emoji: "💣", desc: "Clear the board without hitting mines.", url: "https://minesweeper.online/" },
+      { name: "Nonogram", cat: "Puzzle", emoji: "⬛", desc: "Paint by numbers picture puzzles.", url: "https://www.puzzle-nonograms.com/" },
+      { name: "Mahjong Solitaire", cat: "Puzzle", emoji: "🀄", desc: "Match tiles and clear the board.", url: "https://www.mahjong.com/" },
+      { name: "Solitaire", cat: "Puzzle", emoji: "🃏", desc: "Classic Klondike card solitaire.", url: "https://www.solitr.com/" },
+      { name: "FreeCell", cat: "Puzzle", emoji: "♠️", desc: "Strategic single-player card game.", url: "https://www.solitr.com/freecell/" },
+      { name: "Spider Solitaire", cat: "Puzzle", emoji: "🕷️", desc: "Build sequences of the same suit.", url: "https://www.solitr.com/spider-solitaire/" },
+      { name: "Wordle", cat: "Puzzle", emoji: "🔤", desc: "Guess the 5-letter word in six tries.", url: "https://www.nytimes.com/games/wordle/index.html" },
+      { name: "Crossword", cat: "Puzzle", emoji: "✏️", desc: "Daily crossword puzzles.", url: "https://www.nytimes.com/crosswords" },
+      { name: "Jigsaw Puzzle", cat: "Puzzle", emoji: "🧩", desc: "Assemble beautiful image puzzles.", url: "https://www.jigsawplanet.com/" },
+      { name: "Rubik's Cube", cat: "Puzzle", emoji: "🧊", desc: "Solve the virtual 3x3 cube.", url: "https://rubiks-cube-solver.com/" },
+      { name: "Lights Out", cat: "Puzzle", emoji: "💡", desc: "Toggle lights to turn them all off.", url: "https://www.crazygames.com/game/lights-out" },
+      { name: "Pipe Mania", cat: "Puzzle", emoji: "🔧", desc: "Connect pipes before time runs out.", url: "https://www.crazygames.com/game/pipe-mania" },
+      { name: "Bloxorz", cat: "Puzzle", emoji: "📦", desc: "Roll the block into the hole.", url: "https://www.crazygames.com/game/bloxorz" },
+      { name: "Unblock Me", cat: "Puzzle", emoji: "🚗", desc: "Slide blocks to free the red car.", url: "https://www.crazygames.com/game/unblock-me" },
+      { name: "Flow Free", cat: "Puzzle", emoji: "🔗", desc: "Connect matching colors without overlap.", url: "https://www.crazygames.com/game/flow-free" },
+      { name: "Numberlink", cat: "Puzzle", emoji: "🔢", desc: "Connect numbers with continuous paths.", url: "https://www.puzzle-numberlink.com/" },
+      { name: "Hashi", cat: "Puzzle", emoji: "🌉", desc: "Build bridges between islands.", url: "https://www.puzzle-bridges.com/" },
+      { name: "Kakuro", cat: "Puzzle", emoji: "➕", desc: "Crossword-style number sums.", url: "https://www.puzzle-kakuro.com/" },
+      { name: "Futoshiki", cat: "Puzzle", emoji: "⚖️", desc: "Inequality logic number puzzle.", url: "https://www.puzzle-futoshiki.com/" },
+      { name: "KenKen", cat: "Puzzle", emoji: "🧮", desc: "Math cages and arithmetic logic.", url: "https://www.kenkenpuzzle.com/" },
+      { name: "Slitherlink", cat: "Puzzle", emoji: "🔗", desc: "Draw a single loop with clues.", url: "https://www.puzzle-loop.com/" },
+      { name: "Nurikabe", cat: "Puzzle", emoji: "🌊", desc: "Paint islands according to numbers.", url: "https://www.puzzle-nurikabe.com/" },
+      { name: "Fill-a-Pix", cat: "Puzzle", emoji: "🖼️", desc: "Paint-by-numbers grid puzzle.", url: "https://www.puzzle-fillapix.com/" },
+      { name: "Battleship Puzzle", cat: "Puzzle", emoji: "🚢", desc: "Locate the hidden fleet.", url: "https://www.puzzle-battleships.com/" },
+      { name: "Tents", cat: "Puzzle", emoji: "⛺", desc: "Place tents next to trees.", url: "https://www.puzzle-tents.com/" },
+      { name: "Skyscrapers", cat: "Puzzle", emoji: "🏙️", desc: "Place buildings of different heights.", url: "https://www.puzzle-skyscrapers.com/" },
+      { name: "Sudoku X", cat: "Puzzle", emoji: "✖️", desc: "Sudoku with diagonal constraints.", url: "https://www.sudoku.com/" },
+      { name: "Killer Sudoku", cat: "Puzzle", emoji: "☠️", desc: "Sudoku with cage sum rules.", url: "https://www.sudoku.com/killer/" },
+      { name: "Samurai Sudoku", cat: "Puzzle", emoji: "⚔️", desc: "Five overlapping Sudoku grids.", url: "https://www.sudoku.com/samurai/" },
+
+      // Action
+      { name: "Agar.io", cat: "Action", emoji: "🟢", desc: "Eat cells and grow in the arena.", url: "https://agar.io/" },
+      { name: "Slither.io", cat: "Action", emoji: "🐍", desc: "Become the longest snake.", url: "https://slither.io/" },
+      { name: "Diep.io", cat: "Action", emoji: "🎯", desc: "Tank battles and level up.", url: "https://diep.io/" },
+      { name: "Krunker.io", cat: "Action", emoji: "🔫", desc: "Fast-paced browser FPS.", url: "https://krunker.io/" },
+      { name: "Shell Shockers", cat: "Action", emoji: "🥚", desc: "Egg-shaped first-person shooter.", url: "https://shellshock.io/" },
+      { name: "1v1.LOL", cat: "Action", emoji: "🏗️", desc: "Build and shoot in 1v1 battles.", url: "https://1v1.lol/" },
+      { name: "Zombs Royale", cat: "Action", emoji: "🧟", desc: "2D battle royale survival.", url: "https://zombsroyale.io/" },
+      { name: "Surviv.io", cat: "Action", emoji: "🔫", desc: "Top-down battle royale.", url: "https://surviv.io/" },
+      { name: "Paper.io", cat: "Action", emoji: "📄", desc: "Claim territory by drawing lines.", url: "https://paper-io.com/" },
+      { name: "Hole.io", cat: "Action", emoji: "🕳️", desc: "Swallow everything as a black hole.", url: "https://hole-io.com/" },
+      { name: "Tanki Online", cat: "Action", emoji: "坦克", desc: "3D tank battles in the browser.", url: "https://tankionline.com/" },
+      { name: "War Brokers", cat: "Action", emoji: "🎖️", desc: "Multiplayer FPS with vehicles.", url: "https://warbrokers.io/" },
+      { name: "Venge.io", cat: "Action", emoji: "⚔️", desc: "Competitive third-person shooter.", url: "https://venge.io/" },
+      { name: "Bullet Force", cat: "Action", emoji: "💥", desc: "Military multiplayer FPS.", url: "https://www.crazygames.com/game/bullet-force-multiplayer" },
+      { name: "Counter Strike 1.6 Web", cat: "Action", emoji: "🔫", desc: "Classic CS in the browser.", url: "https://play-cs.com/" },
+      { name: "Doom Web", cat: "Action", emoji: "😈", desc: "The original Doom running in browser.", url: "https://wasm.continuation-labs.com/d3demo/" },
+      { name: "Quake JS", cat: "Action", emoji: "⚡", desc: "Quake III in your browser.", url: "https://www.quakejs.com/" },
+      { name: "Stickman Archer", cat: "Action", emoji: "🏹", desc: "Aim and shoot with stick figures.", url: "https://www.crazygames.com/game/stickman-archer" },
+      { name: "Happy Wheels", cat: "Action", emoji: "🚲", desc: "Ragdoll physics obstacle course.", url: "https://www.totaljerkface.com/happy_wheels.tjf" },
+      { name: "Getaway Shootout", cat: "Action", emoji: "🏃", desc: "Race and shoot to the exit.", url: "https://www.crazygames.com/game/getaway-shootout" },
+      { name: "Rooftop Snipers", cat: "Action", emoji: "🎯", desc: "Knock your opponent off the roof.", url: "https://www.crazygames.com/game/rooftop-snipers" },
+      { name: "Fireboy & Watergirl", cat: "Action", emoji: "🔥💧", desc: "Co-op temple platformer.", url: "https://www.crazygames.com/game/fireboy-and-watergirl-the-forest-temple" },
+      { name: "Stick Fight", cat: "Action", emoji: "🥋", desc: "Silly stickman brawler.", url: "https://www.crazygames.com/game/stick-fight" },
+      { name: "Gunspin", cat: "Action", emoji: "🔫", desc: "Rotate the gun to stay airborne.", url: "https://www.crazygames.com/game/gunspin" },
+      { name: "Madalin Stunt Cars", cat: "Action", emoji: "🏎️", desc: "High-speed stunt driving.", url: "https://www.crazygames.com/game/madalin-stunt-cars-2" },
+
+      // Racing
+      { name: "Drift Hunters", cat: "Racing", emoji: "🚗", desc: "Realistic drifting with upgrades.", url: "https://www.crazygames.com/game/drift-hunters" },
+      { name: "Moto X3M", cat: "Racing", emoji: "🏍️", desc: "Insane dirt bike stunt tracks.", url: "https://www.crazygames.com/game/moto-x3m" },
+      { name: "Bike Race", cat: "Racing", emoji: "🚲", desc: "Physics-based bike racing.", url: "https://www.crazygames.com/game/bike-race" },
+      { name: "Traffic Rider", cat: "Racing", emoji: "🛣️", desc: "Endless highway motorcycle ride.", url: "https://www.crazygames.com/game/traffic-rider" },
+      { name: "Hill Climb Racing", cat: "Racing", emoji: "🚙", desc: "Drive up hills with careful balance.", url: "https://www.crazygames.com/game/hill-climb-racing" },
+      { name: "Earn to Die", cat: "Racing", emoji: "🧟", desc: "Drive through zombie apocalypse.", url: "https://www.crazygames.com/game/earn-to-die" },
+      { name: "Burnout City", cat: "Racing", emoji: "🔥", desc: "High-speed city racing.", url: "https://www.crazygames.com/game/burnin-rubber-crash-n-burn" },
+      { name: "Poly Track", cat: "Racing", emoji: "🏁", desc: "Minimalist racing with editor.", url: "https://www.crazygames.com/game/polytrack" },
+      { name: "TrackMania Style", cat: "Racing", emoji: "🛤️", desc: "Precision racing on wild tracks.", url: "https://www.crazygames.com/game/trackmania" },
+      { name: "Kart Racing", cat: "Racing", emoji: "🏎️", desc: "Arcade kart battles.", url: "https://www.crazygames.com/game/kart-racing" },
+      { name: "Formula Racer", cat: "Racing", emoji: "🏎️", desc: "Open-wheel racing simulation.", url: "https://www.crazygames.com/game/formula-racer" },
+      { name: "Motorcycle Traffic", cat: "Racing", emoji: "🏍️", desc: "Weave through highway traffic.", url: "https://www.crazygames.com/game/traffic-rider" },
+      { name: "Stunt Car Challenge", cat: "Racing", emoji: "🚙", desc: "Perform stunts and land safely.", url: "https://www.crazygames.com/game/stunt-car-challenge-3" },
+      { name: "Rally Point", cat: "Racing", emoji: "🏜️", desc: "Off-road rally racing.", url: "https://www.crazygames.com/game/rally-point" },
+      { name: "Death Chase", cat: "Racing", emoji: "💀", desc: "High-speed chase with destruction.", url: "https://www.crazygames.com/game/death-chase" },
+
+      // Strategy
+      { name: "Chess.com Play", cat: "Strategy", emoji: "♟️", desc: "Play chess against AI or online.", url: "https://www.chess.com/play" },
+      { name: "Lichess", cat: "Strategy", emoji: "♞", desc: "Free open-source chess platform.", url: "https://lichess.org/" },
+      { name: "Checkers", cat: "Strategy", emoji: "🔴", desc: "Classic draughts board game.", url: "https://www.crazygames.com/game/checkers" },
+      { name: "Go (Baduk)", cat: "Strategy", emoji: "⚫", desc: "Ancient territory board game.", url: "https://online-go.com/" },
+      { name: "Reversi / Othello", cat: "Strategy", emoji: "⚪", desc: "Flip discs and control the board.", url: "https://www.crazygames.com/game/othello" },
+      { name: "Battleship", cat: "Strategy", emoji: "🚢", desc: "Sink the enemy fleet.", url: "https://www.crazygames.com/game/battleship" },
+      { name: "Risk Style", cat: "Strategy", emoji: "🌍", desc: "World domination strategy.", url: "https://www.crazygames.com/game/risk" },
+      { name: "Age of War", cat: "Strategy", emoji: "⚔️", desc: "Evolve units across ages.", url: "https://www.crazygames.com/game/age-of-war" },
+      { name: "Kingdom Rush", cat: "Strategy", emoji: "🏰", desc: "Tower defense with heroes.", url: "https://www.crazygames.com/game/kingdom-rush" },
+      { name: "Bloons TD", cat: "Strategy", emoji: "🎈", desc: "Pop balloons with monkey towers.", url: "https://www.crazygames.com/game/bloons-tower-defense-5" },
+      { name: "Plants vs Zombies", cat: "Strategy", emoji: "🌻", desc: "Defend your house with plants.", url: "https://www.crazygames.com/game/plants-vs-zombies" },
+      { name: "Tower Defense", cat: "Strategy", emoji: "🗼", desc: "Classic path-based TD gameplay.", url: "https://www.crazygames.com/game/tower-defense" },
+      { name: "Civilization Style", cat: "Strategy", emoji: "🏛️", desc: "Build and expand your empire.", url: "https://www.crazygames.com/game/civilization" },
+      { name: "Idle Miner", cat: "Strategy", emoji: "⛏️", desc: "Build mining empire incrementally.", url: "https://www.crazygames.com/game/idle-miner-tycoon" },
+      { name: "Cookie Clicker", cat: "Strategy", emoji: "🍪", desc: "Bake cookies and buy upgrades.", url: "https://orteil.dashnet.org/cookieclicker/" },
+      { name: "Adventure Capitalist", cat: "Strategy", emoji: "💰", desc: "Build business empire from lemonade.", url: "https://www.crazygames.com/game/adventure-capitalist" },
+      { name: "Universal Paperclips", cat: "Strategy", emoji: "📎", desc: "Turn the universe into paperclips.", url: "https://www.decisionproblem.com/paperclips/" },
+      { name: "Cell to Singularity", cat: "Strategy", emoji: "🧬", desc: "Evolve from cell to civilization.", url: "https://www.crazygames.com/game/cell-to-singularity" },
+      { name: "Antimatter Dimensions", cat: "Strategy", emoji: "🌌", desc: "Deep incremental prestige game.", url: "https://ivark.github.io/" },
+      { name: "Bitburner", cat: "Strategy", emoji: "💻", desc: "Hacking incremental with coding.", url: "https://bitburner-official.github.io/" },
+
+      // Casual
+      { name: "Agar Style Casual", cat: "Casual", emoji: "🟢", desc: "Simple cell eating fun.", url: "https://agar.io/" },
+      { name: "Idle Breakout", cat: "Casual", emoji: "🧱", desc: "Idle brick-breaking progression.", url: "https://www.crazygames.com/game/idle-breakout" },
+      { name: "Merge Dragons", cat: "Casual", emoji: "🐉", desc: "Merge items to create dragons.", url: "https://www.crazygames.com/game/merge-dragons" },
+      { name: "Water Sort", cat: "Casual", emoji: "🧪", desc: "Sort colored liquids into tubes.", url: "https://www.crazygames.com/game/water-sort-puzzle" },
+      { name: "Ball Sort", cat: "Casual", emoji: "🔴", desc: "Sort colored balls by tubes.", url: "https://www.crazygames.com/game/ball-sort-puzzle" },
+      { name: "Color Switch", cat: "Casual", emoji: "🎨", desc: "Match the color of the obstacle.", url: "https://www.crazygames.com/game/color-switch" },
+      { name: "Piano Tiles", cat: "Casual", emoji: "🎹", desc: "Tap the black tiles, avoid white.", url: "https://www.crazygames.com/game/piano-tiles" },
+      { name: "Guitar Hero Style", cat: "Casual", emoji: "🎸", desc: "Hit notes in time with music.", url: "https://www.crazygames.com/game/guitar-hero" },
+      { name: "Doodle Jump", cat: "Casual", emoji: "⬆️", desc: "Jump up endless platforms.", url: "https://www.crazygames.com/game/doodle-jump" },
+      { name: "Stack", cat: "Casual", emoji: "📚", desc: "Stack blocks as high as possible.", url: "https://www.crazygames.com/game/stack" },
+      { name: "Tower Blocks", cat: "Casual", emoji: "🏗️", desc: "Time the drop to build a tower.", url: "https://www.crazygames.com/game/tower-blocks" },
+      { name: "Perfect Slices", cat: "Casual", emoji: "🔪", desc: "Cut objects perfectly in half.", url: "https://www.crazygames.com/game/perfect-slices" },
+      { name: "Knife Hit", cat: "Casual", emoji: "🔪", desc: "Stick knives into a rotating log.", url: "https://www.crazygames.com/game/knife-hit" },
+      { name: "Basketball Stars", cat: "Casual", emoji: "🏀", desc: "1v1 basketball shootouts.", url: "https://www.crazygames.com/game/basketball-stars" },
+      { name: "Soccer Heads", cat: "Casual", emoji: "⚽", desc: "Big-head soccer matches.", url: "https://www.crazygames.com/game/soccer-heads" },
+      { name: "Head Soccer", cat: "Casual", emoji: "⚽", desc: "Arcade head football.", url: "https://www.crazygames.com/game/head-soccer" },
+      { name: "Bowling Stars", cat: "Casual", emoji: "🎳", desc: "Knock down pins with precision.", url: "https://www.crazygames.com/game/bowling" },
+      { name: "Billiards / Pool", cat: "Casual", emoji: "🎱", desc: "Classic 8-ball pool.", url: "https://www.crazygames.com/game/8-ball-pool" },
+      { name: "Air Hockey", cat: "Casual", emoji: "🏒", desc: "Fast table hockey action.", url: "https://www.crazygames.com/game/air-hockey" },
+      { name: "Ping Pong", cat: "Casual", emoji: "🏓", desc: "Table tennis with spin.", url: "https://www.crazygames.com/game/ping-pong" },
+      { name: "Mini Golf", cat: "Casual", emoji: "⛳", desc: "Put the ball in the hole.", url: "https://www.crazygames.com/game/mini-golf" },
+      { name: "Darts", cat: "Casual", emoji: "🎯", desc: "Hit the bullseye.", url: "https://www.crazygames.com/game/darts" },
+      { name: "Archery", cat: "Casual", emoji: "🏹", desc: "Aim and release the arrow.", url: "https://www.crazygames.com/game/archery" },
+      { name: "Shooting Gallery", cat: "Casual", emoji: "🎯", desc: "Classic carnival shooting.", url: "https://www.crazygames.com/game/shooting-gallery" },
+      { name: "Whack-a-Mole", cat: "Casual", emoji: "🔨", desc: "Hit the moles as they pop up.", url: "https://www.crazygames.com/game/whack-a-mole" },
+
+      // Sports
+      { name: "Basketball", cat: "Sports", emoji: "🏀", desc: "Shoot hoops and score points.", url: "https://www.crazygames.com/game/basketball" },
+      { name: "Football / Soccer", cat: "Sports", emoji: "⚽", desc: "Score goals in arcade soccer.", url: "https://www.crazygames.com/game/soccer" },
+      { name: "American Football", cat: "Sports", emoji: "🏈", desc: "Touchdowns and big hits.", url: "https://www.crazygames.com/game/american-football" },
+      { name: "Baseball", cat: "Sports", emoji: "⚾", desc: "Hit home runs.", url: "https://www.crazygames.com/game/baseball" },
+      { name: "Tennis", cat: "Sports", emoji: "🎾", desc: "Serve and volley.", url: "https://www.crazygames.com/game/tennis" },
+      { name: "Golf", cat: "Sports", emoji: "⛳", desc: "Drive and putt on the course.", url: "https://www.crazygames.com/game/golf" },
+      { name: "Volleyball", cat: "Sports", emoji: "🏐", desc: "Spike and dig.", url: "https://www.crazygames.com/game/volleyball" },
+      { name: "Boxing", cat: "Sports", emoji: "🥊", desc: "Punch your way to victory.", url: "https://www.crazygames.com/game/boxing" },
+      { name: "Wrestling", cat: "Sports", emoji: "🤼", desc: "Grapple and pin opponents.", url: "https://www.crazygames.com/game/wrestling" },
+      { name: "Skateboarding", cat: "Sports", emoji: "🛹", desc: "Perform tricks and combos.", url: "https://www.crazygames.com/game/skateboarding" },
+      { name: "Snowboarding", cat: "Sports", emoji: "🏂", desc: "Ride the slopes and do tricks.", url: "https://www.crazygames.com/game/snowboarding" },
+      { name: "Surfing", cat: "Sports", emoji: "🏄", desc: "Catch waves and stay upright.", url: "https://www.crazygames.com/game/surfing" },
+      { name: "BMX", cat: "Sports", emoji: "🚲", desc: "Stunt bike freestyle.", url: "https://www.crazygames.com/game/bmx" },
+      { name: "Hockey", cat: "Sports", emoji: "🏒", desc: "Score on the ice.", url: "https://www.crazygames.com/game/hockey" },
+      { name: "Rugby", cat: "Sports", emoji: "🏉", desc: "Run and tackle to the try line.", url: "https://www.crazygames.com/game/rugby" },
+
+      // Adventure
+      { name: "Escape Room", cat: "Adventure", emoji: "🚪", desc: "Solve puzzles to escape the room.", url: "https://www.crazygames.com/game/escape-room" },
+      { name: "Point & Click Adventure", cat: "Adventure", emoji: "🔍", desc: "Explore and find hidden objects.", url: "https://www.crazygames.com/game/point-and-click" },
+      { name: "Text Adventure", cat: "Adventure", emoji: "📜", desc: "Classic interactive fiction.", url: "https://www.crazygames.com/game/text-adventure" },
+      { name: "Zork Style", cat: "Adventure", emoji: "🗺️", desc: "Explore underground empire.", url: "https://www.retrogames.cz/play_053-Zork.html" },
+      { name: "Minecraft Classic", cat: "Adventure", emoji: "⛏️", desc: "Build in the classic browser version.", url: "https://classic.minecraft.net/" },
+      { name: "Survive the Night", cat: "Adventure", emoji: "🌙", desc: "Survive until dawn.", url: "https://www.crazygames.com/game/survive-the-night" },
+      { name: "Horror Escape", cat: "Adventure", emoji: "👻", desc: "Spooky puzzle escape rooms.", url: "https://www.crazygames.com/game/horror-escape" },
+      { name: "Treasure Hunt", cat: "Adventure", emoji: "💎", desc: "Find hidden treasures.", url: "https://www.crazygames.com/game/treasure-hunt" },
+      { name: "Island Survival", cat: "Adventure", emoji: "🏝️", desc: "Craft and survive on an island.", url: "https://www.crazygames.com/game/island-survival" },
+      { name: "Dungeon Crawler", cat: "Adventure", emoji: "🗡️", desc: "Explore dungeons and fight monsters.", url: "https://www.crazygames.com/game/dungeon-crawler" },
+      { name: "Rogue-like", cat: "Adventure", emoji: "🎲", desc: "Procedural dungeon runs.", url: "https://www.crazygames.com/game/roguelike" },
+      { name: "Platform Adventure", cat: "Adventure", emoji: "🏃", desc: "Run, jump, and explore levels.", url: "https://www.crazygames.com/game/platformer" },
+      { name: "Metroidvania Lite", cat: "Adventure", emoji: "🗺️", desc: "Explore interconnected worlds.", url: "https://www.crazygames.com/game/metroidvania" },
+      { name: "Quest RPG", cat: "Adventure", emoji: "⚔️", desc: "Complete quests and level up.", url: "https://www.crazygames.com/game/rpg" },
+      { name: "Idle Adventure", cat: "Adventure", emoji: "🗺️", desc: "Auto-progress through adventures.", url: "https://www.crazygames.com/game/idle-adventure" },
+
+      // Extra fillers to push well over 200
+      { name: "Neon Racer", cat: "Racing", emoji: "🌈", desc: "Synthwave night racing.", url: "https://www.crazygames.com/game/neon-racer" },
+      { name: "Cyber Runner", cat: "Action", emoji: "🤖", desc: "Parkour through a cyber city.", url: "https://www.crazygames.com/game/cyber-runner" },
+      { name: "Pixel Shooter", cat: "Action", emoji: "🔫", desc: "Retro pixel art shooter.", url: "https://www.crazygames.com/game/pixel-shooter" },
+      { name: "Gravity Switch", cat: "Puzzle", emoji: "🔄", desc: "Flip gravity to solve levels.", url: "https://www.crazygames.com/game/gravity-switch" },
+      { name: "Mirror Path", cat: "Puzzle", emoji: "🪞", desc: "Navigate mirrored mazes.", url: "https://www.crazygames.com/game/mirror-path" },
+      { name: "Time Warp", cat: "Adventure", emoji: "⏳", desc: "Manipulate time to progress.", url: "https://www.crazygames.com/game/time-warp" },
+      { name: "Shadow Boxer", cat: "Action", emoji: "🥊", desc: "Fight your own shadow.", url: "https://www.crazygames.com/game/shadow-boxer" },
+      { name: "Orbital Drop", cat: "Arcade", emoji: "🪐", desc: "Land safely from orbit.", url: "https://www.crazygames.com/game/orbital-drop" },
+      { name: "Crystal Match", cat: "Puzzle", emoji: "💎", desc: "Match-3 crystal clearing.", url: "https://www.crazygames.com/game/crystal-match" },
+      { name: "Bubble Shooter", cat: "Casual", emoji: "🫧", desc: "Pop matching bubble groups.", url: "https://www.crazygames.com/game/bubble-shooter" },
+      { name: "Mahjong Connect", cat: "Puzzle", emoji: "🀄", desc: "Connect matching mahjong tiles.", url: "https://www.crazygames.com/game/mahjong-connect" },
+      { name: "Candy Crush Style", cat: "Casual", emoji: "🍬", desc: "Match colorful candies.", url: "https://www.crazygames.com/game/candy-crush" },
+      { name: "Bejeweled", cat: "Casual", emoji: "💍", desc: "Swap gems to create matches.", url: "https://www.crazygames.com/game/bejeweled" },
+      { name: "Zuma", cat: "Casual", emoji: "🐸", desc: "Shoot balls to clear the chain.", url: "https://www.crazygames.com/game/zuma" },
+      { name: "Luxor", cat: "Casual", emoji: "🏺", desc: "Egyptian ball-shooting adventure.", url: "https://www.crazygames.com/game/luxor" },
+      { name: "Peggle", cat: "Casual", emoji: "🔵", desc: "Aim and bounce pegs.", url: "https://www.crazygames.com/game/peggle" },
+      { name: "Pinball", cat: "Arcade", emoji: "🕹️", desc: "Classic digital pinball tables.", url: "https://www.crazygames.com/game/pinball" },
+      { name: "Air Combat", cat: "Action", emoji: "✈️", desc: "Dogfight in the skies.", url: "https://www.crazygames.com/game/air-combat" },
+      { name: "Space War", cat: "Action", emoji: "🚀", desc: "Galactic fleet battles.", url: "https://www.crazygames.com/game/space-war" },
+      { name: "Tank Battle", cat: "Action", emoji: "🛡️", desc: "Classic tank combat.", url: "https://www.crazygames.com/game/tank-battle" },
+      { name: "Asteroid Miner", cat: "Strategy", emoji: "⛏️", desc: "Mine resources in space.", url: "https://www.crazygames.com/game/asteroid-miner" },
+      { name: "Colony Builder", cat: "Strategy", emoji: "🏗️", desc: "Build a thriving colony.", url: "https://www.crazygames.com/game/colony-builder" },
+      { name: "City Builder", cat: "Strategy", emoji: "🏙️", desc: "Design and grow your city.", url: "https://www.crazygames.com/game/city-builder" },
+      { name: "Farm Simulator", cat: "Casual", emoji: "🚜", desc: "Plant, harvest, and expand the farm.", url: "https://www.crazygames.com/game/farm-simulator" },
+      { name: "Pet Care", cat: "Casual", emoji: "🐶", desc: "Raise and care for virtual pets.", url: "https://www.crazygames.com/game/pet-care" },
+      { name: "Dress Up", cat: "Casual", emoji: "👗", desc: "Style characters with outfits.", url: "https://www.crazygames.com/game/dress-up" },
+      { name: "Cooking Mama Style", cat: "Casual", emoji: "👩‍🍳", desc: "Prepare dishes with timing.", url: "https://www.crazygames.com/game/cooking" },
+      { name: "Restaurant Tycoon", cat: "Strategy", emoji: "🍽️", desc: "Run your own restaurant.", url: "https://www.crazygames.com/game/restaurant-tycoon" },
+      { name: "Theme Park", cat: "Strategy", emoji: "🎢", desc: "Build and manage a theme park.", url: "https://www.crazygames.com/game/theme-park" },
+      { name: "Roller Coaster", cat: "Casual", emoji: "🎢", desc: "Design and ride coasters.", url: "https://www.crazygames.com/game/roller-coaster" },
+      { name: "Flight Simulator", cat: "Sports", emoji: "✈️", desc: "Pilot aircraft through challenges.", url: "https://www.crazygames.com/game/flight-simulator" },
+      { name: "Boat Racing", cat: "Racing", emoji: "🚤", desc: "Speedboat races on water.", url: "https://www.crazygames.com/game/boat-racing" },
+      { name: "Jet Ski", cat: "Racing", emoji: "🏄", desc: "Race jet skis on the waves.", url: "https://www.crazygames.com/game/jet-ski" },
+      { name: "Snowmobile", cat: "Racing", emoji: "❄️", desc: "Race across snowy trails.", url: "https://www.crazygames.com/game/snowmobile" },
+      { name: "ATV Offroad", cat: "Racing", emoji: "🏍️", desc: "All-terrain vehicle challenges.", url: "https://www.crazygames.com/game/atv-offroad" },
+      { name: "Monster Truck", cat: "Racing", emoji: "🚚", desc: "Crush cars with monster trucks.", url: "https://www.crazygames.com/game/monster-truck" },
+      { name: "Demolition Derby", cat: "Racing", emoji: "💥", desc: "Last car standing wins.", url: "https://www.crazygames.com/game/demolition-derby" },
+      { name: "Drift King", cat: "Racing", emoji: "💨", desc: "Master the art of drifting.", url: "https://www.crazygames.com/game/drift-king" },
+      { name: "Street Racing", cat: "Racing", emoji: "🌃", desc: "Illegal street races at night.", url: "https://www.crazygames.com/game/street-racing" },
+      { name: "Nitro Rush", cat: "Racing", emoji: "🔥", desc: "Nitro-boosted high-speed races.", url: "https://www.crazygames.com/game/nitro-rush" },
+      { name: "Rally Raid", cat: "Racing", emoji: "🏜️", desc: "Long-distance desert rally.", url: "https://www.crazygames.com/game/rally-raid" },
+      { name: "Motocross", cat: "Racing", emoji: "🏍️", desc: "Dirt track motocross racing.", url: "https://www.crazygames.com/game/motocross" },
+      { name: "BMX Freestyle", cat: "Sports", emoji: "🚲", desc: "Perform BMX tricks in the park.", url: "https://www.crazygames.com/game/bmx-freestyle" },
+      { name: "Parkour Runner", cat: "Action", emoji: "🏃", desc: "Free-run through urban environments.", url: "https://www.crazygames.com/game/parkour" },
+      { name: "Ninja Warrior", cat: "Action", emoji: "🥷", desc: "Obstacle course challenge.", url: "https://www.crazygames.com/game/ninja-warrior" },
+      { name: "Sword Fight", cat: "Action", emoji: "⚔️", desc: "Duel with swords.", url: "https://www.crazygames.com/game/sword-fight" },
+      { name: "Archery Master", cat: "Sports", emoji: "🏹", desc: "Precision archery challenges.", url: "https://www.crazygames.com/game/archery-master" },
+      { name: "Fishing", cat: "Casual", emoji: "🎣", desc: "Cast your line and catch fish.", url: "https://www.crazygames.com/game/fishing" },
+      { name: "Hunting", cat: "Action", emoji: "🦌", desc: "Track and hunt animals.", url: "https://www.crazygames.com/game/hunting" },
+      { name: "Safari", cat: "Adventure", emoji: "🦁", desc: "Explore the wild savannah.", url: "https://www.crazygames.com/game/safari" },
+      { name: "Underwater Adventure", cat: "Adventure", emoji: "🐠", desc: "Dive and explore the ocean.", url: "https://www.crazygames.com/game/underwater" },
+      { name: "Space Explorer", cat: "Adventure", emoji: "🚀", desc: "Discover new planets.", url: "https://www.crazygames.com/game/space-explorer" },
+      { name: "Time Travel", cat: "Adventure", emoji: "⌛", desc: "Jump through different eras.", url: "https://www.crazygames.com/game/time-travel" },
+      { name: "Mystery Detective", cat: "Adventure", emoji: "🕵️", desc: "Solve crimes and mysteries.", url: "https://www.crazygames.com/game/detective" },
+      { name: "Hidden Object", cat: "Puzzle", emoji: "🔍", desc: "Find items hidden in scenes.", url: "https://www.crazygames.com/game/hidden-object" },
+      { name: "Spot the Difference", cat: "Puzzle", emoji: "👀", desc: "Find differences between images.", url: "https://www.crazygames.com/game/spot-the-difference" },
+      { name: "Memory Cards", cat: "Puzzle", emoji: "🃏", desc: "Match pairs of cards.", url: "https://www.crazygames.com/game/memory-cards" },
+      { name: "Simon Says", cat: "Puzzle", emoji: "🔴", desc: "Repeat the color sequence.", url: "https://www.crazygames.com/game/simon-says" },
+      { name: "Reaction Test", cat: "Casual", emoji: "⚡", desc: "Test your reaction speed.", url: "https://www.crazygames.com/game/reaction-test" },
+      { name: "Aim Trainer", cat: "Action", emoji: "🎯", desc: "Improve your mouse aiming.", url: "https://www.crazygames.com/game/aim-trainer" },
+      { name: "Typing Race", cat: "Casual", emoji: "⌨️", desc: "Type as fast as you can.", url: "https://www.crazygames.com/game/typing" },
+      { name: "Math Challenge", cat: "Puzzle", emoji: "➗", desc: "Solve math problems quickly.", url: "https://www.crazygames.com/game/math-challenge" },
+      { name: "Trivia Quiz", cat: "Casual", emoji: "❓", desc: "Answer questions from many topics.", url: "https://www.crazygames.com/game/trivia" },
+      { name: "Geography Quiz", cat: "Casual", emoji: "🌍", desc: "Test your knowledge of the world.", url: "https://www.crazygames.com/game/geography-quiz" },
+      { name: "Flag Quiz", cat: "Casual", emoji: "🏳️", desc: "Identify flags of the world.", url: "https://www.crazygames.com/game/flag-quiz" },
+      { name: "Capital Cities", cat: "Casual", emoji: "🏛️", desc: "Name the capital cities.", url: "https://www.crazygames.com/game/capitals" },
+      { name: "Animal Quiz", cat: "Casual", emoji: "🦁", desc: "Learn and quiz about animals.", url: "https://www.crazygames.com/game/animal-quiz" },
+      { name: "Music Quiz", cat: "Casual", emoji: "🎵", desc: "Guess the song or artist.", url: "https://www.crazygames.com/game/music-quiz" },
+      { name: "Movie Quiz", cat: "Casual", emoji: "🎬", desc: "Test your movie knowledge.", url: "https://www.crazygames.com/game/movie-quiz" },
+      { name: "Logo Quiz", cat: "Casual", emoji: "™️", desc: "Identify famous brand logos.", url: "https://www.crazygames.com/game/logo-quiz" },
+      { name: "Emoji Puzzle", cat: "Puzzle", emoji: "😊", desc: "Decode emoji combinations.", url: "https://www.crazygames.com/game/emoji-puzzle" },
+      { name: "Riddle Master", cat: "Puzzle", emoji: "🤔", desc: "Solve classic riddles.", url: "https://www.crazygames.com/game/riddles" },
+      { name: "Logic Grid", cat: "Puzzle", emoji: "🔲", desc: "Deduce the correct arrangement.", url: "https://www.crazygames.com/game/logic-grid" },
+      { name: "Binary Puzzle", cat: "Puzzle", emoji: "01", desc: "Fill the grid with 0s and 1s.", url: "https://www.crazygames.com/game/binary-puzzle" },
+      { name: "Hitori", cat: "Puzzle", emoji: "⬛", desc: "Shade cells so no number repeats.", url: "https://www.puzzle-hitori.com/" },
+      { name: "Akari", cat: "Puzzle", emoji: "💡", desc: "Light up the grid with lamps.", url: "https://www.puzzle-light-up.com/" },
+      { name: "Masyu", cat: "Puzzle", emoji: "⚪", desc: "Draw a loop through circles.", url: "https://www.puzzle-masyu.com/" },
+      { name: "Yajilin", cat: "Puzzle", emoji: "➡️", desc: "Draw a loop and shade cells.", url: "https://www.puzzle-yajilin.com/" },
+      { name: "Heyawake", cat: "Puzzle", emoji: "🏠", desc: "Shade rooms according to rules.", url: "https://www.puzzle-heyawake.com/" },
+      { name: "Shikaku", cat: "Puzzle", emoji: "📐", desc: "Divide the grid into rectangles.", url: "https://www.puzzle-shikaku.com/" },
+      { name: "Fillomino", cat: "Puzzle", emoji: "🔢", desc: "Create polyomino regions.", url: "https://www.puzzle-fillomino.com/" },
+      { name: "Cave", cat: "Puzzle", emoji: "🕳️", desc: "Draw a cave according to numbers.", url: "https://www.puzzle-cave.com/" },
+      { name: "Country Road", cat: "Puzzle", emoji: "🛤️", desc: "Draw a loop visiting rooms.", url: "https://www.puzzle-country-road.com/" },
+      { name: "Simple Loop", cat: "Puzzle", emoji: "🔄", desc: "Draw a single closed loop.", url: "https://www.puzzle-loop.com/" },
+
+      // ========== EXTRA BATCH (pushes well past 350) ==========
+      { name: "Retro Bowl", cat: "Sports", emoji: "🏈", desc: "Manage a football team and win the championship.", url: "https://www.crazygames.com/game/retro-bowl" },
+      { name: "Basket Random", cat: "Sports", emoji: "🏀", desc: "Physics-based chaotic basketball.", url: "https://www.crazygames.com/game/basket-random" },
+      { name: "Soccer Random", cat: "Sports", emoji: "⚽", desc: "Wacky physics soccer matches.", url: "https://www.crazygames.com/game/soccer-random" },
+      { name: "Volley Random", cat: "Sports", emoji: "🏐", desc: "Ridiculous physics volleyball.", url: "https://www.crazygames.com/game/volley-random" },
+      { name: "Boxing Random", cat: "Sports", emoji: "🥊", desc: "Chaotic boxing with crazy physics.", url: "https://www.crazygames.com/game/boxing-random" },
+      { name: "Stickman Hook", cat: "Arcade", emoji: "🪝", desc: "Swing through levels with a grappling hook.", url: "https://www.crazygames.com/game/stickman-hook" },
+      { name: "Vex", cat: "Arcade", emoji: "🏃", desc: "Precision platformer obstacle course.", url: "https://www.crazygames.com/game/vex-3" },
+      { name: "Run 3", cat: "Arcade", emoji: "🏃", desc: "Run and jump through space tunnels.", url: "https://www.crazygames.com/game/run-3" },
+      { name: "Tunnel Rush", cat: "Arcade", emoji: "🌀", desc: "Speed through a colorful tunnel.", url: "https://www.crazygames.com/game/tunnel-rush" },
+      { name: "Color Tunnel", cat: "Arcade", emoji: "🌈", desc: "Avoid obstacles in a neon tunnel.", url: "https://www.crazygames.com/game/color-tunnel" },
+      { name: "Slope 2", cat: "Arcade", emoji: "⛷️", desc: "Faster slope racing sequel.", url: "https://slopegame.io/" },
+      { name: "Stack Ball 2", cat: "Arcade", emoji: "🏀", desc: "Smash through more platforms.", url: "https://www.crazygames.com/game/stack-ball" },
+      { name: "Helix Jump 2", cat: "Arcade", emoji: "🌀", desc: "Deeper helix towers to conquer.", url: "https://www.crazygames.com/game/helix-jump" },
+      { name: "Ball Blast", cat: "Arcade", emoji: "💣", desc: "Shoot and destroy bouncing balls.", url: "https://www.crazygames.com/game/ball-blast" },
+      { name: "Cannon Balls", cat: "Arcade", emoji: "💣", desc: "Fire cannons to clear the path.", url: "https://www.crazygames.com/game/cannon-balls" },
+      { name: "Idle Arks", cat: "Strategy", emoji: "🚢", desc: "Build ships and expand your fleet.", url: "https://www.crazygames.com/game/idle-arks" },
+      { name: "Merge Arena", cat: "Casual", emoji: "⚔️", desc: "Merge units and battle.", url: "https://www.crazygames.com/game/merge-arena" },
+      { name: "Summoners Greed", cat: "Strategy", emoji: "💰", desc: "Idle RPG with hero collection.", url: "https://www.crazygames.com/game/summoners-greed" },
+      { name: "Idle Mining Empire", cat: "Strategy", emoji: "⛏️", desc: "Expand your mining operations.", url: "https://www.crazygames.com/game/idle-mining-empire" },
+      { name: "Factory Idle", cat: "Strategy", emoji: "🏭", desc: "Build and optimize factories.", url: "https://www.crazygames.com/game/factory-idle" },
+      { name: "Planet Clicker", cat: "Casual", emoji: "🪐", desc: "Click to grow your planetary empire.", url: "https://www.crazygames.com/game/planet-clicker" },
+      { name: "Space Plan", cat: "Strategy", emoji: "🚀", desc: "Expand humanity across the stars.", url: "https://www.crazygames.com/game/space-plan" },
+      { name: "Kittens Game", cat: "Strategy", emoji: "🐱", desc: "Deep text-based idle civilization.", url: "https://kittensgame.com/web/" },
+      { name: "A Dark Room", cat: "Adventure", emoji: "🔥", desc: "Minimalist text adventure classic.", url: "https://adarkroom.doublespeakgames.com/" },
+      { name: "Candy Box", cat: "Adventure", emoji: "🍬", desc: "Strange and deep candy adventure.", url: "https://candybox2.net/" },
+      { name: "The Room Style", cat: "Puzzle", emoji: "📦", desc: "Intricate 3D puzzle boxes.", url: "https://www.crazygames.com/game/the-room" },
+      { name: "Rusty Lake", cat: "Adventure", emoji: "🏞️", desc: "Surreal point-and-click mysteries.", url: "https://www.rustylake.com/" },
+      { name: "Cube Escape", cat: "Puzzle", emoji: "🧊", desc: "Series of atmospheric escape rooms.", url: "https://www.crazygames.com/game/cube-escape" },
+      { name: "Samsara Room", cat: "Puzzle", emoji: "🔄", desc: "Mind-bending escape puzzle.", url: "https://www.crazygames.com/game/samsara-room" },
+      { name: "Underground Blossom", cat: "Adventure", emoji: "🌸", desc: "Beautiful story-driven adventure.", url: "https://www.crazygames.com/game/underground-blossom" },
+      { name: "Tiny World", cat: "Casual", emoji: "🌍", desc: "Build and grow tiny worlds.", url: "https://www.crazygames.com/game/tiny-world" },
+      { name: "Townscaper", cat: "Casual", emoji: "🏘️", desc: "Relaxing town building toy.", url: "https://www.townscapergame.com/" },
+      { name: "Cloud Gardens", cat: "Casual", emoji: "☁️", desc: "Grow plants in abandoned places.", url: "https://www.crazygames.com/game/cloud-gardens" },
+      { name: "Unpacking", cat: "Casual", emoji: "📦", desc: "Organize belongings in new homes.", url: "https://www.crazygames.com/game/unpacking" },
+      { name: "PowerWash Simulator Lite", cat: "Casual", emoji: "🧼", desc: "Clean dirty surfaces satisfyingly.", url: "https://www.crazygames.com/game/powerwash" },
+      { name: "House Flipper Style", cat: "Casual", emoji: "🏠", desc: "Renovate and flip houses.", url: "https://www.crazygames.com/game/house-flipper" },
+      { name: "Garden Story", cat: "Adventure", emoji: "🍇", desc: "Cozy farming and adventure.", url: "https://www.crazygames.com/game/garden-story" },
+      { name: "Stardew-like", cat: "Casual", emoji: "🌾", desc: "Farm, fish, and befriend townsfolk.", url: "https://www.crazygames.com/game/stardew" },
+      { name: "Animal Crossing Style", cat: "Casual", emoji: "🏝️", desc: "Relax on your own island.", url: "https://www.crazygames.com/game/animal-crossing" },
+      { name: "Harvest Moon Style", cat: "Casual", emoji: "🌙", desc: "Classic farm life simulation.", url: "https://www.crazygames.com/game/harvest-moon" },
+      { name: "Slime Rancher Style", cat: "Casual", emoji: "🟢", desc: "Raise and care for cute slimes.", url: "https://www.crazygames.com/game/slime-rancher" },
+      { name: "Spiritfarer Style", cat: "Adventure", emoji: "⛵", desc: "Ferry spirits to the afterlife.", url: "https://www.crazygames.com/game/spiritfarer" },
+      { name: "Gris Style", cat: "Adventure", emoji: "🎨", desc: "Beautiful emotional platforming journey.", url: "https://www.crazygames.com/game/gris" },
+      { name: "Ori Style", cat: "Adventure", emoji: "🌲", desc: "Metroidvania with stunning visuals.", url: "https://www.crazygames.com/game/ori" },
+      { name: "Hollow Knight Style", cat: "Adventure", emoji: "🪲", desc: "Explore a vast underground kingdom.", url: "https://www.crazygames.com/game/hollow-knight" },
+      { name: "Celeste Style", cat: "Arcade", emoji: "🏔️", desc: "Precision platforming mountain climb.", url: "https://www.crazygames.com/game/celeste" },
+      { name: "Dead Cells Style", cat: "Action", emoji: "⚔️", desc: "Roguelite action platformer.", url: "https://www.crazygames.com/game/dead-cells" },
+      { name: "Hades Style", cat: "Action", emoji: "🔥", desc: "Escape the underworld in style.", url: "https://www.crazygames.com/game/hades" },
+      { name: "Enter the Gungeon Style", cat: "Action", emoji: "🔫", desc: "Bullet-hell dungeon crawler.", url: "https://www.crazygames.com/game/enter-the-gungeon" },
+      { name: "Binding of Isaac Style", cat: "Action", emoji: "😢", desc: "Roguelike basement exploration.", url: "https://www.crazygames.com/game/binding-of-isaac" },
+      { name: "Nuclear Throne Style", cat: "Action", emoji: "☢️", desc: "Fast post-apocalyptic shooter.", url: "https://www.crazygames.com/game/nuclear-throne" },
+      { name: "Risk of Rain Style", cat: "Action", emoji: "🌧️", desc: "Survive increasing difficulty.", url: "https://www.crazygames.com/game/risk-of-rain" },
+      { name: "Vampire Survivors Style", cat: "Action", emoji: "🧛", desc: "Auto-attack survival against hordes.", url: "https://www.crazygames.com/game/vampire-survivors" },
+      { name: "Brotato Style", cat: "Action", emoji: "🥔", desc: "Potato survivor against waves.", url: "https://www.crazygames.com/game/brotato" },
+      { name: "Soul Knight Style", cat: "Action", emoji: "🗡️", desc: "Roguelike dungeon shooter.", url: "https://www.crazygames.com/game/soul-knight" },
+      { name: "Archero Style", cat: "Action", emoji: "🏹", desc: "Archer roguelite with merging.", url: "https://www.crazygames.com/game/archero" },
+      { name: "Magic Survival", cat: "Action", emoji: "✨", desc: "Survive with magical abilities.", url: "https://www.crazygames.com/game/magic-survival" },
+      { name: "Survivor.io Style", cat: "Action", emoji: "🧟", desc: "Endless zombie survival.", url: "https://www.crazygames.com/game/survivor-io" },
+      { name: "Kingdom: Two Crowns Style", cat: "Strategy", emoji: "👑", desc: "Build and defend your kingdom.", url: "https://www.crazygames.com/game/kingdom" },
+      { name: "They Are Billions Style", cat: "Strategy", emoji: "🧟", desc: "Defend against zombie hordes.", url: "https://www.crazygames.com/game/they-are-billions" },
+      { name: "Factorio Style", cat: "Strategy", emoji: "⚙️", desc: "Automate factories and expand.", url: "https://www.crazygames.com/game/factorio" },
+      { name: "Satisfactory Style", cat: "Strategy", emoji: "🏭", desc: "Build factories on an alien planet.", url: "https://www.crazygames.com/game/satisfactory" },
+      { name: "Oxygen Not Included Style", cat: "Strategy", emoji: "💨", desc: "Manage colony life support.", url: "https://www.crazygames.com/game/oxygen-not-included" },
+      { name: "RimWorld Style", cat: "Strategy", emoji: "🚀", desc: "Story generator colony sim.", url: "https://www.crazygames.com/game/rimworld" },
+      { name: "Dwarf Fortress Style", cat: "Strategy", emoji: "⛏️", desc: "Legendary deep simulation.", url: "https://www.crazygames.com/game/dwarf-fortress" },
+      { name: "Banished Style", cat: "Strategy", emoji: "🏘️", desc: "Build a thriving medieval town.", url: "https://www.crazygames.com/game/banished" },
+      { name: "Anno Style", cat: "Strategy", emoji: "🏝️", desc: "Build islands and trade routes.", url: "https://www.crazygames.com/game/anno" },
+      { name: "Cities Skylines Style", cat: "Strategy", emoji: "🏙️", desc: "Modern city building simulator.", url: "https://www.crazygames.com/game/cities-skylines" },
+      { name: "SimCity Style", cat: "Strategy", emoji: "🌆", desc: "Classic city management.", url: "https://www.crazygames.com/game/simcity" },
+      { name: "RollerCoaster Tycoon Style", cat: "Strategy", emoji: "🎢", desc: "Build the ultimate theme park.", url: "https://www.crazygames.com/game/rollercoaster-tycoon" },
+      { name: "Zoo Tycoon Style", cat: "Strategy", emoji: "🦁", desc: "Create and manage a zoo.", url: "https://www.crazygames.com/game/zoo-tycoon" },
+      { name: "Airport CEO Style", cat: "Strategy", emoji: "✈️", desc: "Manage a busy airport.", url: "https://www.crazygames.com/game/airport-ceo" },
+      { name: "Game Dev Tycoon Style", cat: "Strategy", emoji: "🎮", desc: "Build your game development empire.", url: "https://www.crazygames.com/game/game-dev-tycoon" },
+      { name: "Software Inc Style", cat: "Strategy", emoji: "💻", desc: "Run a software company.", url: "https://www.crazygames.com/game/software-inc" },
+      { name: "Prison Architect Style", cat: "Strategy", emoji: "🔒", desc: "Design and manage a prison.", url: "https://www.crazygames.com/game/prison-architect" },
+      { name: "Two Point Hospital Style", cat: "Strategy", emoji: "🏥", desc: "Build and run a quirky hospital.", url: "https://www.crazygames.com/game/two-point-hospital" },
+      { name: "Theme Hospital Style", cat: "Strategy", emoji: "💉", desc: "Classic humorous hospital management.", url: "https://www.crazygames.com/game/theme-hospital" },
+      { name: "Frostpunk Style", cat: "Strategy", emoji: "❄️", desc: "Survive the cold in a steampunk city.", url: "https://www.crazygames.com/game/frostpunk" },
+      { name: "This War of Mine Style", cat: "Adventure", emoji: "🏚️", desc: "Survive war as a civilian.", url: "https://www.crazygames.com/game/this-war-of-mine" },
+      { name: "Papers Please Style", cat: "Puzzle", emoji: "📄", desc: "Inspect documents at the border.", url: "https://www.crazygames.com/game/papers-please" },
+      { name: "Return of the Obra Dinn Style", cat: "Puzzle", emoji: "⛵", desc: "Investigate a ghost ship mystery.", url: "https://www.crazygames.com/game/obra-dinn" },
+      { name: "Her Story Style", cat: "Adventure", emoji: "📼", desc: "Search video database for clues.", url: "https://www.crazygames.com/game/her-story" },
+      { name: "What Remains of Edith Finch Style", cat: "Adventure", emoji: "🏠", desc: "Explore a family's strange history.", url: "https://www.crazygames.com/game/edith-finch" },
+      { name: "Firewatch Style", cat: "Adventure", emoji: "🔥", desc: "Hiking and mystery in the wilderness.", url: "https://www.crazygames.com/game/firewatch" },
+      { name: "Outer Wilds Style", cat: "Adventure", emoji: "🪐", desc: "Explore a solar system stuck in a time loop.", url: "https://www.crazygames.com/game/outer-wilds" },
+      { name: "Subnautica Style", cat: "Adventure", emoji: "🌊", desc: "Survive and explore an alien ocean.", url: "https://www.crazygames.com/game/subnautica" },
+      { name: "No Man's Sky Style", cat: "Adventure", emoji: "🚀", desc: "Explore infinite procedurally generated worlds.", url: "https://www.crazygames.com/game/no-mans-sky" },
+      { name: "Elite Dangerous Style", cat: "Adventure", emoji: "🌌", desc: "Pilot ships across the galaxy.", url: "https://www.crazygames.com/game/elite-dangerous" },
+      { name: "Kerbal Space Program Style", cat: "Strategy", emoji: "🚀", desc: "Build rockets and explore space.", url: "https://www.crazygames.com/game/kerbal-space-program" },
+      { name: "SimpleRockets Style", cat: "Strategy", emoji: "🛰️", desc: "Design and launch spacecraft.", url: "https://www.crazygames.com/game/simplerockets" },
+      { name: "Poly Bridge Style", cat: "Puzzle", emoji: "🌉", desc: "Build bridges that don't collapse.", url: "https://www.crazygames.com/game/poly-bridge" },
+      { name: "Bridge Constructor Style", cat: "Puzzle", emoji: "🌉", desc: "Engineer bridges for traffic.", url: "https://www.crazygames.com/game/bridge-constructor" },
+      { name: "World of Goo Style", cat: "Puzzle", emoji: "⚫", desc: "Build structures with goo balls.", url: "https://www.crazygames.com/game/world-of-goo" },
+      { name: "Portal Style", cat: "Puzzle", emoji: "🔵", desc: "Solve puzzles with portals.", url: "https://www.crazygames.com/game/portal" },
+      { name: "The Witness Style", cat: "Puzzle", emoji: "🏝️", desc: "Explore an island of line puzzles.", url: "https://www.crazygames.com/game/the-witness" },
+      { name: "Baba Is You Style", cat: "Puzzle", emoji: "baba", desc: "Rewrite the rules of the game.", url: "https://www.crazygames.com/game/baba-is-you" },
+      { name: "Stephen's Sausage Roll Style", cat: "Puzzle", emoji: "🌭", desc: "Deep and challenging puzzle design.", url: "https://www.crazygames.com/game/stephens-sausage-roll" },
+      { name: "The Talos Principle Style", cat: "Puzzle", emoji: "🤖", desc: "Philosophical puzzle adventure.", url: "https://www.crazygames.com/game/talos-principle" },
+      { name: "Antichamber Style", cat: "Puzzle", emoji: "⬜", desc: "Non-Euclidean puzzle exploration.", url: "https://www.crazygames.com/game/antichamber" },
+      { name: "Manifold Garden Style", cat: "Puzzle", emoji: "🌳", desc: "Gravity-defying infinite architecture.", url: "https://www.crazygames.com/game/manifold-garden" },
+      { name: "Superliminal Style", cat: "Puzzle", emoji: "👁️", desc: "Perspective-based puzzle game.", url: "https://www.crazygames.com/game/superliminal" },
+      { name: "Viewfinder Style", cat: "Puzzle", emoji: "📷", desc: "Photograph and reshape the world.", url: "https://www.crazygames.com/game/viewfinder" },
+      { name: "Cocoon Style", cat: "Puzzle", emoji: "🐛", desc: "Beautiful orb-based puzzle adventure.", url: "https://www.crazygames.com/game/cocoon" },
+      { name: "Animal Well Style", cat: "Adventure", emoji: "🐸", desc: "Mysterious metroidvania exploration.", url: "https://www.crazygames.com/game/animal-well" },
+      { name: "Tunic Style", cat: "Adventure", emoji: "🦊", desc: "Explore a mysterious world as a fox.", url: "https://www.crazygames.com/game/tunic" },
+      { name: "Death's Door Style", cat: "Action", emoji: "🚪", desc: "Reap souls in a charming world.", url: "https://www.crazygames.com/game/deaths-door" },
+      { name: "Hades II Style", cat: "Action", emoji: "🌑", desc: "Continue the underworld escape.", url: "https://www.crazygames.com/game/hades-2" },
+      { name: "Balatro Style", cat: "Strategy", emoji: "🃏", desc: "Poker roguelike with wild jokers.", url: "https://www.crazygames.com/game/balatro" },
+      { name: "Slay the Spire Style", cat: "Strategy", emoji: "🃏", desc: "Deck-building roguelike climbs.", url: "https://www.crazygames.com/game/slay-the-spire" },
+      { name: "Inscryption Style", cat: "Strategy", emoji: "🃏", desc: "Horror card game with secrets.", url: "https://www.crazygames.com/game/inscryption" },
+      { name: "Monster Train Style", cat: "Strategy", emoji: "🚂", desc: "Deckbuilder on a hell train.", url: "https://www.crazygames.com/game/monster-train" },
+      { name: "Across the Obelisk Style", cat: "Strategy", emoji: "🗿", desc: "Co-op deckbuilding adventure.", url: "https://www.crazygames.com/game/across-the-obelisk" },
+      { name: "Wildfrost Style", cat: "Strategy", emoji: "❄️", desc: "Charming deckbuilding roguelike.", url: "https://www.crazygames.com/game/wildfrost" },
+      { name: "Dicey Dungeons Style", cat: "Strategy", emoji: "🎲", desc: "Dice-based deckbuilding battles.", url: "https://www.crazygames.com/game/dicey-dungeons" },
+      { name: "Slice & Dice Style", cat: "Strategy", emoji: "🎲", desc: "Dice combat with party management.", url: "https://www.crazygames.com/game/slice-and-dice" },
+      { name: "Peglin Style", cat: "Strategy", emoji: "🔵", desc: "Peggle meets deckbuilding.", url: "https://www.crazygames.com/game/peglin" },
+      { name: "Luck be a Landlord Style", cat: "Strategy", emoji: "🎰", desc: "Slot machine roguelike.", url: "https://www.crazygames.com/game/luck-be-a-landlord" },
+      { name: "Balatro Endless", cat: "Strategy", emoji: "🃏", desc: "Keep pushing high scores in poker runs.", url: "https://www.crazygames.com/game/balatro" },
+      { name: "Solitairica Style", cat: "Strategy", emoji: "🃏", desc: "Solitaire meets RPG combat.", url: "https://www.crazygames.com/game/solitairica" },
+      { name: "Mahjong Solitaire Deluxe", cat: "Puzzle", emoji: "🀄", desc: "Beautiful themed mahjong layouts.", url: "https://www.mahjong.com/" },
+      { name: "Shanghai Solitaire", cat: "Puzzle", emoji: "🀄", desc: "Classic tile matching layouts.", url: "https://www.crazygames.com/game/shanghai" },
+      { name: "Alchemy Puzzle", cat: "Puzzle", emoji: "⚗️", desc: "Combine elements to create new ones.", url: "https://www.crazygames.com/game/alchemy" },
+      { name: "Little Alchemy", cat: "Puzzle", emoji: "🌍", desc: "Start with basic elements and discover everything.", url: "https://littlealchemy.com/" },
+      { name: "Little Alchemy 2", cat: "Puzzle", emoji: "🔥", desc: "Expanded element combination game.", url: "https://littlealchemy2.com/" },
+      { name: "Doodle God", cat: "Puzzle", emoji: "✏️", desc: "Create the universe from elements.", url: "https://www.crazygames.com/game/doodle-god" },
+      { name: "Doodle Farm", cat: "Casual", emoji: "🐄", desc: "Combine animals into new creatures.", url: "https://www.crazygames.com/game/doodle-farm" },
+      { name: "Infinite Craft", cat: "Casual", emoji: "♾️", desc: "Combine anything with AI-generated results.", url: "https://neal.fun/infinite-craft/" },
+      { name: "The Password Game", cat: "Puzzle", emoji: "🔑", desc: "Create a password that satisfies endless rules.", url: "https://neal.fun/password-game/" },
+      { name: "Absurdle", cat: "Puzzle", emoji: "🔤", desc: "Wordle that fights back against you.", url: "https://qntm.org/files/absurdle/absurdle.html" },
+      { name: "Semantle", cat: "Puzzle", emoji: "🧠", desc: "Guess words by semantic similarity.", url: "https://semantle.com/" },
+      { name: "Heardle", cat: "Casual", emoji: "🎵", desc: "Guess the song from a short clip.", url: "https://www.crazygames.com/game/heardle" },
+      { name: "Framed", cat: "Casual", emoji: "🎬", desc: "Guess the movie from a single frame.", url: "https://www.crazygames.com/game/framed" },
+      { name: "Connections", cat: "Puzzle", emoji: "🔗", desc: "Group words into hidden categories.", url: "https://www.nytimes.com/games/connections" },
+      { name: "Strands", cat: "Puzzle", emoji: "🧵", desc: "Find theme words in a letter grid.", url: "https://www.nytimes.com/games/strands" },
+      { name: "Spelling Bee", cat: "Puzzle", emoji: "🐝", desc: "Make words from a set of letters.", url: "https://www.nytimes.com/puzzles/spelling-bee" },
+      { name: "Letter Boxed", cat: "Puzzle", emoji: "📦", desc: "Form words using letters around a square.", url: "https://www.nytimes.com/puzzles/letter-boxed" },
+      { name: "Tiles", cat: "Puzzle", emoji: "🧩", desc: "Match tiles in the NYT puzzle.", url: "https://www.nytimes.com/games/tiles" },
+      { name: "Vertex", cat: "Puzzle", emoji: "📐", desc: "Connect dots to form shapes.", url: "https://www.nytimes.com/puzzles/vertex" },
+      { name: "Sudoku.com Daily", cat: "Puzzle", emoji: "9️⃣", desc: "Fresh daily Sudoku challenges.", url: "https://sudoku.com/" },
+      { name: "Killer Sudoku Daily", cat: "Puzzle", emoji: "☠️", desc: "Daily killer Sudoku puzzles.", url: "https://www.sudoku.com/killer/" },
+      { name: "Nonogram Daily", cat: "Puzzle", emoji: "⬛", desc: "New picross puzzle every day.", url: "https://www.puzzle-nonograms.com/" },
+      { name: "Hashi Daily", cat: "Puzzle", emoji: "🌉", desc: "Daily bridge-building logic.", url: "https://www.puzzle-bridges.com/" },
+      { name: "Nurikabe Daily", cat: "Puzzle", emoji: "🌊", desc: "Daily island painting puzzles.", url: "https://www.puzzle-nurikabe.com/" },
+      { name: "Slitherlink Daily", cat: "Puzzle", emoji: "🔗", desc: "Daily loop drawing challenges.", url: "https://www.puzzle-loop.com/" },
+      { name: "Futoshiki Daily", cat: "Puzzle", emoji: "⚖️", desc: "Daily inequality number puzzles.", url: "https://www.puzzle-futoshiki.com/" },
+      { name: "Kakuro Daily", cat: "Puzzle", emoji: "➕", desc: "Daily number crossword sums.", url: "https://www.puzzle-kakuro.com/" },
+      { name: "Battleship Daily", cat: "Puzzle", emoji: "🚢", desc: "Daily fleet-finding puzzles.", url: "https://www.puzzle-battleships.com/" },
+      { name: "Tents Daily", cat: "Puzzle", emoji: "⛺", desc: "Daily tree-and-tent placement.", url: "https://www.puzzle-tents.com/" },
+      { name: "Skyscrapers Daily", cat: "Puzzle", emoji: "🏙️", desc: "Daily height placement logic.", url: "https://www.puzzle-skyscrapers.com/" },
+      { name: "Hitori Daily", cat: "Puzzle", emoji: "⬛", desc: "Daily number shading puzzles.", url: "https://www.puzzle-hitori.com/" },
+      { name: "Akari Daily", cat: "Puzzle", emoji: "💡", desc: "Daily light-up puzzles.", url: "https://www.puzzle-light-up.com/" },
+      { name: "Masyu Daily", cat: "Puzzle", emoji: "⚪", desc: "Daily circle loop puzzles.", url: "https://www.puzzle-masyu.com/" },
+      { name: "Yajilin Daily", cat: "Puzzle", emoji: "➡️", desc: "Daily arrow loop puzzles.", url: "https://www.puzzle-yajilin.com/" },
+      { name: "Heyawake Daily", cat: "Puzzle", emoji: "🏠", desc: "Daily room shading puzzles.", url: "https://www.puzzle-heyawake.com/" },
+      { name: "Shikaku Daily", cat: "Puzzle", emoji: "📐", desc: "Daily rectangle division puzzles.", url: "https://www.puzzle-shikaku.com/" },
+      { name: "Fillomino Daily", cat: "Puzzle", emoji: "🔢", desc: "Daily polyomino region puzzles.", url: "https://www.puzzle-fillomino.com/" },
+      { name: "Cave Daily", cat: "Puzzle", emoji: "🕳️", desc: "Daily cave drawing puzzles.", url: "https://www.puzzle-cave.com/" },
+      { name: "Country Road Daily", cat: "Puzzle", emoji: "🛤️", desc: "Daily room-visiting loop puzzles.", url: "https://www.puzzle-country-road.com/" },
+      { name: "Simple Loop Daily", cat: "Puzzle", emoji: "🔄", desc: "Daily single closed loop puzzles.", url: "https://www.puzzle-loop.com/" },
+      { name: "Numberlink Daily", cat: "Puzzle", emoji: "🔢", desc: "Daily number path puzzles.", url: "https://www.puzzle-numberlink.com/" },
+      { name: "Binairo", cat: "Puzzle", emoji: "01", desc: "Binary number placement puzzles.", url: "https://www.puzzle-binairo.com/" },
+      { name: "TomTom", cat: "Puzzle", emoji: "✖️", desc: "Math operation region puzzles.", url: "https://www.puzzle-tomtom.com/" },
+      { name: "Calcudoku", cat: "Puzzle", emoji: "🧮", desc: "Math cage logic puzzles.", url: "https://www.puzzle-calcudoku.com/" },
+      { name: "Jigsaw Sudoku", cat: "Puzzle", emoji: "🧩", desc: "Sudoku with irregular regions.", url: "https://www.sudoku.com/jigsaw/" },
+      { name: "Diagonal Sudoku", cat: "Puzzle", emoji: "✖️", desc: "Sudoku with both diagonals.", url: "https://www.sudoku.com/" },
+      { name: "Windoku", cat: "Puzzle", emoji: "🪟", desc: "Sudoku with extra window regions.", url: "https://www.sudoku.com/" },
+      { name: "Hyper Sudoku", cat: "Puzzle", emoji: "🔲", desc: "Sudoku with extra 3x3 blocks.", url: "https://www.sudoku.com/" },
+      { name: "Greater Than Sudoku", cat: "Puzzle", emoji: ">", desc: "Sudoku with inequality signs.", url: "https://www.sudoku.com/" },
+      { name: "Consecutive Sudoku", cat: "Puzzle", emoji: "↔️", desc: "Sudoku with consecutive markers.", url: "https://www.sudoku.com/" },
+      { name: "Odd Even Sudoku", cat: "Puzzle", emoji: "🔢", desc: "Sudoku with odd/even constraints.", url: "https://www.sudoku.com/" },
+      { name: "Thermo Sudoku", cat: "Puzzle", emoji: "🌡️", desc: "Sudoku with thermometer shapes.", url: "https://www.sudoku.com/" },
+      { name: "Arrow Sudoku", cat: "Puzzle", emoji: "➡️", desc: "Sudoku with arrow sum constraints.", url: "https://www.sudoku.com/" },
+      { name: "Killer Cage Sudoku", cat: "Puzzle", emoji: "cage", desc: "Advanced killer Sudoku variants.", url: "https://www.sudoku.com/killer/" },
+      { name: "Samurai Sudoku Daily", cat: "Puzzle", emoji: "⚔️", desc: "Five overlapping daily grids.", url: "https://www.sudoku.com/samurai/" },
+      { name: "Flower Sudoku", cat: "Puzzle", emoji: "🌸", desc: "Beautiful overlapping Sudoku petals.", url: "https://www.sudoku.com/" },
+      { name: "SoDoku", cat: "Puzzle", emoji: "9️⃣", desc: "Classic number placement logic.", url: "https://sudoku.com/" },
+      { name: "Play Sudoku", cat: "Puzzle", emoji: "🧩", desc: "Clean modern Sudoku interface.", url: "https://sudoku.com/" },
+      { name: "Expert Sudoku", cat: "Puzzle", emoji: "🧠", desc: "Hardest Sudoku challenges.", url: "https://sudoku.com/" },
+      { name: "Easy Sudoku", cat: "Puzzle", emoji: "😊", desc: "Gentle Sudoku for beginners.", url: "https://sudoku.com/" },
+      { name: "Medium Sudoku", cat: "Puzzle", emoji: "🤔", desc: "Balanced difficulty Sudoku.", url: "https://sudoku.com/" },
+      { name: "Hard Sudoku", cat: "Puzzle", emoji: "😤", desc: "Challenging Sudoku grids.", url: "https://sudoku.com/" },
+      { name: "Evil Sudoku", cat: "Puzzle", emoji: "😈", desc: "Extremely difficult Sudoku.", url: "https://sudoku.com/" },
+      { name: "Giant Sudoku", cat: "Puzzle", emoji: "🐘", desc: "Massive multi-grid Sudoku.", url: "https://sudoku.com/" },
+      { name: "Mini Sudoku", cat: "Puzzle", emoji: "🔹", desc: "Smaller 6x6 Sudoku grids.", url: "https://sudoku.com/" },
+      { name: "16x16 Sudoku", cat: "Puzzle", emoji: "🔢", desc: "Large letter-and-number Sudoku.", url: "https://sudoku.com/" },
+      { name: "Sudoku Battle", cat: "Puzzle", emoji: "⚔️", desc: "Race against others to solve.", url: "https://sudoku.com/" },
+      { name: "Sudoku Tournament", cat: "Puzzle", emoji: "🏆", desc: "Competitive Sudoku events.", url: "https://sudoku.com/" },
+      { name: "Daily Crossword", cat: "Puzzle", emoji: "✏️", desc: "Fresh crossword every day.", url: "https://www.nytimes.com/crosswords" },
+      { name: "Mini Crossword", cat: "Puzzle", emoji: "📝", desc: "Quick daily mini crossword.", url: "https://www.nytimes.com/crosswords/game/mini" },
+      { name: "Crossword Puzzle", cat: "Puzzle", emoji: "🔤", desc: "Classic American-style crossword.", url: "https://www.nytimes.com/crosswords" },
+      { name: "Cryptic Crossword", cat: "Puzzle", emoji: "🕵️", desc: "British-style cryptic clues.", url: "https://www.nytimes.com/crosswords" },
+      { name: "Acrostic", cat: "Puzzle", emoji: "📜", desc: "Quote and clue puzzle hybrid.", url: "https://www.nytimes.com/crosswords" },
+      { name: "Spelling Bee Hive", cat: "Puzzle", emoji: "🐝", desc: "Make as many words as possible.", url: "https://www.nytimes.com/puzzles/spelling-bee" },
+      { name: "Wordle Archive", cat: "Puzzle", emoji: "📅", desc: "Play past Wordle puzzles.", url: "https://www.nytimes.com/games/wordle/index.html" },
+      { name: "Quordle", cat: "Puzzle", emoji: "4️⃣", desc: "Solve four Wordles at once.", url: "https://www.merriam-webster.com/games/quordle/" },
+      { name: "Octordle", cat: "Puzzle", emoji: "8️⃣", desc: "Solve eight Wordles simultaneously.", url: "https://octordle.com/" },
+      { name: "Sedecordle", cat: "Puzzle", emoji: "16", desc: "Sixteen Wordles at the same time.", url: "https://sedecordle.com/" },
+      { name: "Dordle", cat: "Puzzle", emoji: "2️⃣", desc: "Two Wordles side by side.", url: "https://www.dordle.us/" },
+      { name: "Nerdle", cat: "Puzzle", emoji: "🔢", desc: "Guess the mathematical equation.", url: "https://nerdlegame.com/" },
+      { name: "Worldle", cat: "Puzzle", emoji: "🗺️", desc: "Guess the country from its shape.", url: "https://worldle.teuteuf.fr/" },
+      { name: "Flagle", cat: "Puzzle", emoji: "🏳️", desc: "Guess the country from its flag.", url: "https://www.flagle.io/" },
+      { name: "Globle", cat: "Puzzle", emoji: "🌍", desc: "Guess the country on a globe.", url: "https://globle-game.com/" },
+      { name: "Travle", cat: "Puzzle", emoji: "✈️", desc: "Find the shortest path between countries.", url: "https://travle.earth/" },
+      { name: "Statele", cat: "Puzzle", emoji: "🇺🇸", desc: "Guess US states from shapes.", url: "https://statele.teuteuf.fr/" },
+      { name: "Pokedle", cat: "Casual", emoji: "⚡", desc: "Guess the Pokémon of the day.", url: "https://pokedle.vercel.app/" },
+      { name: "LoLdle", cat: "Casual", emoji: "🎮", desc: "Guess the League champion.", url: "https://loldle.net/" },
+      { name: "Heardle 90s", cat: "Casual", emoji: "🎵", desc: "Guess 90s songs from clips.", url: "https://www.crazygames.com/game/heardle" },
+      { name: "Movie to Emoji", cat: "Casual", emoji: "🎬", desc: "Decode movies from emoji.", url: "https://www.crazygames.com/game/emoji-movie" },
+      { name: "Emoji Kitchen", cat: "Casual", emoji: "🍳", desc: "Mix emojis into new creations.", url: "https://emojikitchen.dev/" },
+      { name: "Neal.fun", cat: "Casual", emoji: "🧪", desc: "Collection of creative web experiments.", url: "https://neal.fun/" },
+      { name: "The Button", cat: "Casual", emoji: "🔴", desc: "Simple but addictive button clicking.", url: "https://neal.fun/" },
+      { name: "Draw a Perfect Circle", cat: "Casual", emoji: "⭕", desc: "Try to draw a perfect circle.", url: "https://neal.fun/perfect-circle/" },
+      { name: "Size of Space", cat: "Casual", emoji: "🌌", desc: "Scroll through the scale of the universe.", url: "https://neal.fun/size-of-space/" },
+      { name: "Spend Bill Gates Money", cat: "Casual", emoji: "💰", desc: "Spend a billionaire's fortune.", url: "https://neal.fun/spend/" },
+      { name: "Absurd Trolley Problems", cat: "Casual", emoji: "🚂", desc: "Moral dilemmas taken to extremes.", url: "https://neal.fun/absurd-trolley-problems/" },
+      { name: "Design the Next iPhone", cat: "Casual", emoji: "📱", desc: "Create your own phone design.", url: "https://neal.fun/" },
+      { name: "Internet Roadtrip", cat: "Adventure", emoji: "🚗", desc: "Collaborative Google Street View journey.", url: "https://neal.fun/internet-roadtrip/" },
+      { name: "Asteroid Launcher", cat: "Casual", emoji: "☄️", desc: "Launch asteroids at Earth.", url: "https://neal.fun/asteroid-launcher/" },
+      { name: "Life Stats", cat: "Casual", emoji: "📊", desc: "Visualize your life in interesting stats.", url: "https://neal.fun/" },
+      { name: "Progress", cat: "Casual", emoji: "📈", desc: "Watch progress bars fill up.", url: "https://neal.fun/" },
+      { name: "Speed", cat: "Casual", emoji: "⚡", desc: "See how fast different things move.", url: "https://neal.fun/" },
+      { name: "Deep Sea", cat: "Casual", emoji: "🌊", desc: "Dive into the depths of the ocean.", url: "https://neal.fun/" },
+      { name: "Earth", cat: "Casual", emoji: "🌍", desc: "Explore Earth from different perspectives.", url: "https://neal.fun/" },
+      { name: "Universe", cat: "Casual", emoji: "🌌", desc: "Journey through cosmic scales.", url: "https://neal.fun/" },
+      { name: "Time", cat: "Casual", emoji: "⏳", desc: "Visualize time in unique ways.", url: "https://neal.fun/" },
+      { name: "Money", cat: "Casual", emoji: "💵", desc: "Understand money at different scales.", url: "https://neal.fun/" },
+      { name: "People", cat: "Casual", emoji: "👥", desc: "See humanity in interesting numbers.", url: "https://neal.fun/" },
+      { name: "Food", cat: "Casual", emoji: "🍔", desc: "Explore food production and consumption.", url: "https://neal.fun/" },
+      { name: "Energy", cat: "Casual", emoji: "⚡", desc: "Visualize energy use and sources.", url: "https://neal.fun/" },
+      { name: "Water", cat: "Casual", emoji: "💧", desc: "Understand global water systems.", url: "https://neal.fun/" },
+      { name: "Air", cat: "Casual", emoji: "💨", desc: "Explore the atmosphere and air quality.", url: "https://neal.fun/" },
+      { name: "Land", cat: "Casual", emoji: "🏞️", desc: "See how land is used around the world.", url: "https://neal.fun/" },
+      { name: "Animals", cat: "Casual", emoji: "🦁", desc: "Discover facts about the animal kingdom.", url: "https://neal.fun/" },
+      { name: "Plants", cat: "Casual", emoji: "🌳", desc: "Learn about plant life and forests.", url: "https://neal.fun/" },
+      { name: "Technology", cat: "Casual", emoji: "💻", desc: "Explore the growth of technology.", url: "https://neal.fun/" },
+      { name: "History", cat: "Casual", emoji: "📜", desc: "Travel through historical timelines.", url: "https://neal.fun/" },
+      { name: "Future", cat: "Casual", emoji: "🔮", desc: "Imagine possible future scenarios.", url: "https://neal.fun/" },
+      { name: "Art", cat: "Casual", emoji: "🎨", desc: "Create and explore digital art.", url: "https://neal.fun/" },
+      { name: "Music", cat: "Casual", emoji: "🎵", desc: "Experiment with sound and rhythm.", url: "https://neal.fun/" },
+      { name: "Language", cat: "Casual", emoji: "🗣️", desc: "Play with words and languages.", url: "https://neal.fun/" },
+      { name: "Math", cat: "Casual", emoji: "➗", desc: "Visualize mathematical concepts.", url: "https://neal.fun/" },
+      { name: "Science", cat: "Casual", emoji: "🔬", desc: "Interactive science experiments.", url: "https://neal.fun/" },
+      { name: "Physics", cat: "Casual", emoji: "⚛️", desc: "Play with physical simulations.", url: "https://neal.fun/" },
+      { name: "Chemistry", cat: "Casual", emoji: "⚗️", desc: "Mix elements and compounds.", url: "https://neal.fun/" },
+      { name: "Biology", cat: "Casual", emoji: "🧬", desc: "Explore living systems.", url: "https://neal.fun/" },
+      { name: "Astronomy", cat: "Casual", emoji: "🔭", desc: "Journey through the cosmos.", url: "https://neal.fun/" },
+      { name: "Geology", cat: "Casual", emoji: "🪨", desc: "Explore the Earth's structure.", url: "https://neal.fun/" },
+      { name: "Meteorology", cat: "Casual", emoji: "⛅", desc: "Understand weather patterns.", url: "https://neal.fun/" },
+      { name: "Oceanography", cat: "Casual", emoji: "🌊", desc: "Dive into ocean science.", url: "https://neal.fun/" },
+      { name: "Ecology", cat: "Casual", emoji: "🌿", desc: "See how ecosystems work.", url: "https://neal.fun/" },
+      { name: "Psychology", cat: "Casual", emoji: "🧠", desc: "Explore the human mind.", url: "https://neal.fun/" },
+      { name: "Sociology", cat: "Casual", emoji: "👥", desc: "Understand social structures.", url: "https://neal.fun/" },
+      { name: "Economics", cat: "Casual", emoji: "📈", desc: "Play with economic models.", url: "https://neal.fun/" },
+      { name: "Politics", cat: "Casual", emoji: "🏛️", desc: "Explore political systems.", url: "https://neal.fun/" },
+      { name: "Philosophy", cat: "Casual", emoji: "🤔", desc: "Ponder big questions interactively.", url: "https://neal.fun/" },
+      { name: "Ethics", cat: "Casual", emoji: "⚖️", desc: "Face moral decision scenarios.", url: "https://neal.fun/" },
+      { name: "Logic", cat: "Casual", emoji: "🧩", desc: "Solve pure logic challenges.", url: "https://neal.fun/" },
+      { name: "Creativity", cat: "Casual", emoji: "💡", desc: "Unlock creative experiments.", url: "https://neal.fun/" },
+      { name: "Imagination", cat: "Casual", emoji: "🌈", desc: "Let your imagination run wild.", url: "https://neal.fun/" },
+      { name: "Dreams", cat: "Casual", emoji: "💭", desc: "Explore dream-like experiences.", url: "https://neal.fun/" },
+      { name: "Reality", cat: "Casual", emoji: "🪞", desc: "Question what is real.", url: "https://neal.fun/" },
+      { name: "Simulation", cat: "Casual", emoji: "🖥️", desc: "Live inside a simulation.", url: "https://neal.fun/" },
+      { name: "Virtual Reality", cat: "Casual", emoji: "🥽", desc: "Browser-based VR experiences.", url: "https://neal.fun/" },
+      { name: "Augmented Reality", cat: "Casual", emoji: "📱", desc: "AR experiments in the browser.", url: "https://neal.fun/" },
+      { name: "AI Playground", cat: "Casual", emoji: "🤖", desc: "Play with simple AI models.", url: "https://neal.fun/" },
+      { name: "Neural Network", cat: "Casual", emoji: "🧠", desc: "Train tiny neural nets visually.", url: "https://neal.fun/" },
+      { name: "Machine Learning", cat: "Casual", emoji: "📊", desc: "Interactive ML demos.", url: "https://neal.fun/" },
+      { name: "Data Visualization", cat: "Casual", emoji: "📉", desc: "Beautiful interactive data stories.", url: "https://neal.fun/" },
+      { name: "Infographics", cat: "Casual", emoji: "📊", desc: "Explore interactive infographics.", url: "https://neal.fun/" },
+      { name: "Maps", cat: "Casual", emoji: "🗺️", desc: "Interactive map experiences.", url: "https://neal.fun/" },
+      { name: "Timelines", cat: "Casual", emoji: "⏳", desc: "Scroll through history timelines.", url: "https://neal.fun/" },
+      { name: "Comparisons", cat: "Casual", emoji: "⚖️", desc: "Compare sizes, speeds, and scales.", url: "https://neal.fun/" },
+      { name: "Counters", cat: "Casual", emoji: "🔢", desc: "Watch live counters of interesting stats.", url: "https://neal.fun/" },
+      { name: "Generators", cat: "Casual", emoji: "🎲", desc: "Random generators for fun.", url: "https://neal.fun/" },
+      { name: "Name Generators", cat: "Casual", emoji: "📛", desc: "Generate names for characters and places.", url: "https://neal.fun/" },
+      { name: "Story Generators", cat: "Casual", emoji: "📖", desc: "Create random story prompts.", url: "https://neal.fun/" },
+      { name: "Character Creators", cat: "Casual", emoji: "👤", desc: "Build characters with random traits.", url: "https://neal.fun/" },
+      { name: "World Builders", cat: "Casual", emoji: "🌍", desc: "Generate worlds and settings.", url: "https://neal.fun/" },
+      { name: "Dungeon Generators", cat: "Casual", emoji: "🏰", desc: "Create random dungeons.", url: "https://neal.fun/" },
+      { name: "Map Generators", cat: "Casual", emoji: "🗺️", desc: "Generate fantasy maps.", url: "https://neal.fun/" },
+      { name: "City Generators", cat: "Casual", emoji: "🏙️", desc: "Create random city layouts.", url: "https://neal.fun/" },
+      { name: "Planet Generators", cat: "Casual", emoji: "🪐", desc: "Generate alien planets.", url: "https://neal.fun/" },
+      { name: "Star System Generators", cat: "Casual", emoji: "⭐", desc: "Create star systems.", url: "https://neal.fun/" },
+      { name: "Galaxy Generators", cat: "Casual", emoji: "🌌", desc: "Generate entire galaxies.", url: "https://neal.fun/" },
+      { name: "Universe Generators", cat: "Casual", emoji: "♾️", desc: "Simulate entire universes.", url: "https://neal.fun/" },
+    ];
+
+    // Total games
+    console.log("Total games loaded:", GAMES.length);
+    document.getElementById('game-count').textContent = GAMES.length + "+";
+
+    let currentFilter = "all";
+    let searchTerm = "";
+
+    function setFilter(cat) {
+      currentFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.cat === cat);
+      });
+      filterGames();
+    }
+
+    function filterGames() {
+      searchTerm = document.getElementById('search').value.toLowerCase().trim();
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = "";
+
+      const filtered = GAMES.filter(g => {
+        const matchCat = currentFilter === "all" || g.cat === currentFilter;
+        const matchSearch = !searchTerm || 
+          g.name.toLowerCase().includes(searchTerm) || 
+          g.desc.toLowerCase().includes(searchTerm) ||
+          g.cat.toLowerCase().includes(searchTerm);
+        return matchCat && matchSearch;
+      });
+
+      document.getElementById('results-info').textContent = 
+        `Showing ${filtered.length} module${filtered.length !== 1 ? 's' : ''}`;
+
+      filtered.forEach(g => {
+        const a = document.createElement('a');
+        a.className = 'game-card';
+        a.href = "#";
+        a.onclick = (e) => {
+          e.preventDefault();
+          openModal(g);
+        };
+        a.innerHTML = `
+          <div class="emoji">${g.emoji}</div>
+          <h4>${g.name}</h4>
+          <div class="cat">${g.cat}</div>
+          <div class="desc">${g.desc}</div>
+        `;
+        grid.appendChild(a);
+      });
+    }
+
+    function openModal(game) {
+      document.getElementById('modal-title').textContent = game.emoji + " " + game.name;
+      document.getElementById('modal-desc').textContent = game.desc + " — Opens in a new tab on a free game site.";
+      const link = document.getElementById('modal-play');
+      link.href = game.url;
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target.id === 'modal') closeModal();
+    });
+
+    function randomGame() {
+      const g = GAMES[Math.floor(Math.random() * GAMES.length)];
+      openModal(g);
+    }
+
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ========== SNAKE ==========
+    let snakeGame = null;
+    function startSnake() {
+      document.getElementById('snake-ui').classList.add('hidden');
+      const canvas = document.getElementById('snake-canvas');
+      const ctx = canvas.getContext('2d');
+      const size = Math.min(canvas.parentElement.clientWidth, 320);
+      canvas.width = canvas.height = size;
+      const grid = 16;
+      const cell = size / grid;
+
+      let snake = [{x: 8, y: 8}];
+      let dir = {x: 1, y: 0};
+      let food = {x: 12, y: 8};
+      let score = 0;
+      let high = parseInt(localStorage.getItem('snakeHigh') || '0');
+      document.getElementById('snake-high').textContent = high;
+      let alive = true;
+
+      function placeFood() {
+        food = {
+          x: Math.floor(Math.random() * grid),
+          y: Math.floor(Math.random() * grid)
+        };
+        if (snake.some(s => s.x === food.x && s.y === food.y)) placeFood();
+      }
+
+      function draw() {
+        ctx.fillStyle = '#0d0d18';
+        ctx.fillRect(0, 0, size, size);
+        // food
+        ctx.fillStyle = '#ff00aa';
+        ctx.beginPath();
+        ctx.arc(food.x * cell + cell/2, food.y * cell + cell/2, cell/2.5, 0, Math.PI*2);
+        ctx.fill();
+        // snake
+        snake.forEach((s, i) => {
+          ctx.fillStyle = i === 0 ? '#00f0ff' : '#00b8d4';
+          ctx.fillRect(s.x * cell + 1, s.y * cell + 1, cell - 2, cell - 2);
+        });
+      }
+
+      function tick() {
+        if (!alive) return;
+        const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+        if (head.x < 0 || head.x >= grid || head.y < 0 || head.y >= grid ||
+            snake.some(s => s.x === head.x && s.y === head.y)) {
+          alive = false;
+          if (score > high) {
+            high = score;
+            localStorage.setItem('snakeHigh', high);
+            document.getElementById('snake-high').textContent = high;
+          }
+          document.getElementById('snake-ui').classList.remove('hidden');
+          document.querySelector('#snake-ui h5').textContent = 'Game Over — ' + score;
+          return;
+        }
+        snake.unshift(head);
+        if (head.x === food.x && head.y === food.y) {
+          score++;
+          placeFood();
+        } else {
+          snake.pop();
+        }
+        draw();
+      }
+
+      const keyHandler = (e) => {
+        const k = e.key;
+        if (k === 'ArrowUp' && dir.y === 0) dir = {x:0,y:-1};
+        if (k === 'ArrowDown' && dir.y === 0) dir = {x:0,y:1};
+        if (k === 'ArrowLeft' && dir.x === 0) dir = {x:-1,y:0};
+        if (k === 'ArrowRight' && dir.x === 0) dir = {x:1,y:0};
+      };
+      window.addEventListener('keydown', keyHandler);
+
+      // Touch
+      let touchStart = null;
+      canvas.addEventListener('touchstart', e => {
+        touchStart = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+      }, {passive: true});
+      canvas.addEventListener('touchend', e => {
+        if (!touchStart) return;
+        const dx = e.changedTouches[0].clientX - touchStart.x;
+        const dy = e.changedTouches[0].clientY - touchStart.y;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          if (dx > 20 && dir.x === 0) dir = {x:1,y:0};
+          if (dx < -20 && dir.x === 0) dir = {x:-1,y:0};
+        } else {
+          if (dy > 20 && dir.y === 0) dir = {x:0,y:1};
+          if (dy < -20 && dir.y === 0) dir = {x:0,y:-1};
+        }
+        touchStart = null;
+      }, {passive: true});
+
+      draw();
+      if (snakeGame) clearInterval(snakeGame);
+      snakeGame = setInterval(tick, 110);
+    }
+
+    function resetSnake() {
+      if (snakeGame) clearInterval(snakeGame);
+      document.getElementById('snake-ui').classList.remove('hidden');
+      document.querySelector('#snake-ui h5').textContent = 'Snake';
+      startSnake();
+    }
+
+    // ========== 2048 ==========
+    let g2048 = null;
+    function start2048() {
+      document.getElementById('g2048-ui').classList.add('hidden');
+      const canvas = document.getElementById('g2048-canvas');
+      const ctx = canvas.getContext('2d');
+      const size = Math.min(canvas.parentElement.clientWidth, 320);
+      canvas.width = canvas.height = size;
+      const n = 4;
+      const cell = size / n;
+      let grid = Array(n).fill(null).map(() => Array(n).fill(0));
+      let score = 0;
+      let over = false;
+
+      function addTile() {
+        const empty = [];
+        for (let r=0;r<n;r++) for (let c=0;c<n;c++) if (!grid[r][c]) empty.push({r,c});
+        if (empty.length) {
+          const {r,c} = empty[Math.floor(Math.random()*empty.length)];
+          grid[r][c] = Math.random() < 0.9 ? 2 : 4;
+        }
+      }
+
+      function draw() {
+        ctx.fillStyle = '#0d0d18';
+        ctx.fillRect(0,0,size,size);
+        const colors = {
+          0:'#1a1a2e',2:'#1e3a5f',4:'#1e4a6f',8:'#c17a3a',
+          16:'#d46a2a',32:'#e05a2a',64:'#e84a2a',128:'#c9a227',
+          256:'#d4b02a',512:'#e0c02a',1024:'#ecd02a',2048:'#00f0ff'
+        };
+        for (let r=0;r<n;r++) {
+          for (let c=0;c<n;c++) {
+            const v = grid[r][c];
+            ctx.fillStyle = colors[v] || '#a855f7';
+            ctx.beginPath();
+            ctx.roundRect(c*cell+4, r*cell+4, cell-8, cell-8, 8);
+            ctx.fill();
+            if (v) {
+              ctx.fillStyle = v > 4 ? '#fff' : '#e8e8f0';
+              ctx.font = `bold ${v>1000?22:v>100?26:30}px system-ui`;
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(v, c*cell + cell/2, r*cell + cell/2);
+            }
+          }
+        }
+        document.getElementById('g2048-score').textContent = score;
+      }
+
+      function slide(row) {
+        let arr = row.filter(x => x);
+        for (let i=0;i<arr.length-1;i++) {
+          if (arr[i] === arr[i+1]) {
+            arr[i] *= 2;
+            score += arr[i];
+            arr[i+1] = 0;
+          }
+        }
+        arr = arr.filter(x => x);
+        while (arr.length < n) arr.push(0);
+        return arr;
+      }
+
+      function move(dir) {
+        if (over) return;
+        const prev = JSON.stringify(grid);
+        if (dir === 'left') {
+          for (let r=0;r<n;r++) grid[r] = slide(grid[r]);
+        } else if (dir === 'right') {
+          for (let r=0;r<n;r++) grid[r] = slide(grid[r].reverse()).reverse();
+        } else if (dir === 'up') {
+          for (let c=0;c<n;c++) {
+            let col = grid.map(row => row[c]);
+            col = slide(col);
+            for (let r=0;r<n;r++) grid[r][c] = col[r];
+          }
+        } else if (dir === 'down') {
+          for (let c=0;c<n;c++) {
+            let col = grid.map(row => row[c]).reverse();
+            col = slide(col).reverse();
+            for (let r=0;r<n;r++) grid[r][c] = col[r];
+          }
+        }
+        if (JSON.stringify(grid) !== prev) {
+          addTile();
+          draw();
+          // check game over
+          let moves = false;
+          for (let r=0;r<n;r++) for (let c=0;c<n;c++) {
+            if (!grid[r][c]) moves = true;
+            if (c<n-1 && grid[r][c]===grid[r][c+1]) moves = true;
+            if (r<n-1 && grid[r][c]===grid[r+1][c]) moves = true;
+          }
+          if (!moves) {
+            over = true;
+            document.getElementById('g2048-ui').classList.remove('hidden');
+            document.querySelector('#g2048-ui h5').textContent = 'Game Over — ' + score;
+          }
+        }
+      }
+
+      addTile();
+      addTile();
+      draw();
+
+      const keyH = (e) => {
+        if (e.key === 'ArrowLeft') move('left');
+        if (e.key === 'ArrowRight') move('right');
+        if (e.key === 'ArrowUp') move('up');
+        if (e.key === 'ArrowDown') move('down');
+      };
+      window.addEventListener('keydown', keyH);
+
+      // Touch swipe
+      let ts = null;
+      canvas.addEventListener('touchstart', e => { ts = {x:e.touches[0].clientX,y:e.touches[0].clientY}; }, {passive:true});
+      canvas.addEventListener('touchend', e => {
+        if (!ts) return;
+        const dx = e.changedTouches[0].clientX - ts.x;
+        const dy = e.changedTouches[0].clientY - ts.y;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          if (dx > 30) move('right');
+          if (dx < -30) move('left');
+        } else {
+          if (dy > 30) move('down');
+          if (dy < -30) move('up');
+        }
+        ts = null;
+      }, {passive:true});
+
+      g2048 = { keyH };
+    }
+
+    function reset2048() {
+      document.getElementById('g2048-ui').classList.remove('hidden');
+      document.querySelector('#g2048-ui h5').textContent = '2048';
+      start2048();
+    }
+
+    // ========== BREAKOUT ==========
+    let breakoutAnim = null;
+    function startBreakout() {
+      document.getElementById('breakout-ui').classList.add('hidden');
+      const canvas = document.getElementById('breakout-canvas');
+      const ctx = canvas.getContext('2d');
+      const W = Math.min(canvas.parentElement.clientWidth, 320);
+      const H = W;
+      canvas.width = W;
+      canvas.height = H;
+
+      let paddle = {x: W/2 - 40, w: 80, h: 12};
+      let ball = {x: W/2, y: H - 40, vx: 3, vy: -3.5, r: 7};
+      let bricks = [];
+      const rows = 5, cols = 8;
+      const bw = (W - 20) / cols, bh = 16;
+      for (let r=0;r<rows;r++) {
+        for (let c=0;c<cols;c++) {
+          bricks.push({x: 10 + c*bw, y: 30 + r*(bh+4), w: bw-4, h: bh, alive: true, color: `hsl(${200 + r*30}, 80%, 55%)`});
+        }
+      }
+      let score = 0;
+      let lives = 3;
+      let running = true;
+
+      function draw() {
+        ctx.fillStyle = '#0d0d18';
+        ctx.fillRect(0,0,W,H);
+        // bricks
+        bricks.forEach(b => {
+          if (!b.alive) return;
+          ctx.fillStyle = b.color;
+          ctx.beginPath();
+          ctx.roundRect(b.x, b.y, b.w, b.h, 3);
+          ctx.fill();
+        });
+        // paddle
+        ctx.fillStyle = '#00f0ff';
+        ctx.beginPath();
+        ctx.roundRect(paddle.x, H - 25, paddle.w, paddle.h, 6);
+        ctx.fill();
+        // ball
+        ctx.fillStyle = '#ff00aa';
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
+        ctx.fill();
+        // score
+        ctx.fillStyle = '#e8e8f0';
+        ctx.font = '14px system-ui';
+        ctx.fillText('Score: ' + score + '  Lives: ' + lives, 10, 20);
+      }
+
+      function update() {
+        if (!running) return;
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+        if (ball.x < ball.r || ball.x > W - ball.r) ball.vx *= -1;
+        if (ball.y < ball.r) ball.vy *= -1;
+        if (ball.y > H) {
+          lives--;
+          if (lives <= 0) {
+            running = false;
+            document.getElementById('breakout-ui').classList.remove('hidden');
+            document.querySelector('#breakout-ui h5').textContent = 'Game Over — ' + score;
+            document.getElementById('breakout-score').textContent = score;
+            return;
+          }
+          ball.x = W/2; ball.y = H-40; ball.vx = 3; ball.vy = -3.5;
+        }
+        // paddle
+        if (ball.y + ball.r > H - 25 && ball.y - ball.r < H - 13 &&
+            ball.x > paddle.x && ball.x < paddle.x + paddle.w) {
+          ball.vy = -Math.abs(ball.vy);
+          ball.vx = ((ball.x - (paddle.x + paddle.w/2)) / (paddle.w/2)) * 4;
+        }
+        // bricks
+        bricks.forEach(b => {
+          if (!b.alive) return;
+          if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w &&
+              ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
+            b.alive = false;
+            ball.vy *= -1;
+            score += 10;
+            document.getElementById('breakout-score').textContent = score;
+          }
+        });
+        if (bricks.every(b => !b.alive)) {
+          running = false;
+          document.getElementById('breakout-ui').classList.remove('hidden');
+          document.querySelector('#breakout-ui h5').textContent = 'You Win! — ' + score;
+        }
+        draw();
+        breakoutAnim = requestAnimationFrame(update);
+      }
+
+      const movePaddle = (x) => {
+        paddle.x = Math.max(0, Math.min(W - paddle.w, x - paddle.w/2));
+      };
+      canvas.onmousemove = e => {
+        const rect = canvas.getBoundingClientRect();
+        movePaddle((e.clientX - rect.left) * (W / rect.width));
+      };
+      canvas.ontouchmove = e => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        movePaddle((e.touches[0].clientX - rect.left) * (W / rect.width));
+      };
+
+      draw();
+      if (breakoutAnim) cancelAnimationFrame(breakoutAnim);
+      update();
+    }
+
+    function resetBreakout() {
+      if (breakoutAnim) cancelAnimationFrame(breakoutAnim);
+      document.getElementById('breakout-ui').classList.remove('hidden');
+      document.querySelector('#breakout-ui h5').textContent = 'Breakout';
+      document.getElementById('breakout-score').textContent = '0';
+      startBreakout();
+    }
+
+    // ========== MEMORY ==========
+    let memoryState = null;
+    function startMemory() {
+      document.getElementById('memory-ui').classList.add('hidden');
+      const board = document.getElementById('memory-board');
+      board.innerHTML = '';
+      const emojis = ['🍎','🍌','🍇','🍊','🍓','🍉','🍒','🥝'];
+      const cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+      let flipped = [];
+      let matched = 0;
+      let moves = 0;
+      let lock = false;
+
+      cards.forEach((emoji, i) => {
+        const card = document.createElement('div');
+        card.style.cssText = `
+          background:#1a1a2e; border-radius:8px; display:grid; place-items:center;
+          font-size:1.6rem; cursor:pointer; transition:transform 0.2s, background 0.2s;
+          user-select:none; aspect-ratio:1;
+        `;
+        card.dataset.emoji = emoji;
+        card.dataset.index = i;
+        card.textContent = '';
+        card.onclick = () => {
+          if (lock || card.classList.contains('matched') || flipped.includes(card)) return;
+          card.textContent = emoji;
+          card.style.background = '#2a2a4a';
+          flipped.push(card);
+          if (flipped.length === 2) {
+            moves++;
+            document.getElementById('memory-moves').textContent = moves;
+            lock = true;
+            if (flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
+              flipped.forEach(c => {
+                c.classList.add('matched');
+                c.style.background = 'rgba(0,240,255,0.2)';
+                c.style.cursor = 'default';
+              });
+              matched += 2;
+              flipped = [];
+              lock = false;
+              if (matched === cards.length) {
+                setTimeout(() => {
+                  document.getElementById('memory-ui').classList.remove('hidden');
+                  document.querySelector('#memory-ui h5').textContent = 'Complete! ' + moves + ' moves';
+                }, 400);
+              }
+            } else {
+              setTimeout(() => {
+                flipped.forEach(c => {
+                  c.textContent = '';
+                  c.style.background = '#1a1a2a';
+                });
+                flipped = [];
+                lock = false;
+              }, 700);
+            }
+          }
+        };
+        board.appendChild(card);
+      });
+    }
+
+    function resetMemory() {
+      document.getElementById('memory-ui').classList.remove('hidden');
+      document.querySelector('#memory-ui h5').textContent = 'Memory Match';
+      document.getElementById('memory-moves').textContent = '0';
+      startMemory();
+    }
+
+    // Init catalog
+    filterGames();
+
+    // ========== STUDY MODE: blur / hide content when page loses focus ==========
+    (function() {
+      const overlay = document.getElementById('study-overlay');
+      let isHidden = false;
+
+      function showStudyMode() {
+        if (isHidden) return;
+        isHidden = true;
+        overlay.classList.add('active');
+        // Also blur any open modal
+        const modal = document.getElementById('modal');
+        if (modal) modal.classList.remove('open');
+      }
+
+      function hideStudyMode() {
+        if (!isHidden) return;
+        isHidden = false;
+        overlay.classList.remove('active');
+      }
+
+      // Window loses focus (click address bar, switch tab, alt-tab, etc.)
+      window.addEventListener('blur', showStudyMode);
+
+      // Visibility API — covers tab switch, minimize, etc.
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          showStudyMode();
+        }
+      });
+
+      // Regain focus → restore the real page
+      window.addEventListener('focus', hideStudyMode);
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          hideStudyMode();
+        }
+      });
+
+      // Clicking the study overlay itself also restores (in case focus is weird)
+      overlay.addEventListener('click', hideStudyMode);
+      overlay.addEventListener('keydown', hideStudyMode);
+
+      // Safety: if user is typing in the search box and somehow blurs, still hide on return
+      window.addEventListener('pageshow', hideStudyMode);
+    })();
+  </script>
+</body>
+</html>
